@@ -9,11 +9,16 @@ AI-powered cold email automation — scrape leads, generate personalized emails 
 - 📤 **SMTP Sending** — Rate-limited email delivery
 - 📊 **Dashboard** — Web UI for campaign management
 - 🧪 **Dry Run** — Preview before sending
+- 📋 **CSV Import** — Import leads from spreadsheets
+- 📧 **Email Verification** — Check email validity (syntax, domain, MX, disposable)
+- 🔄 **Follow-up Sequences** — Multi-step auto follow-ups with delays
 
 ## Quick Start
 
 ```bash
 # Install
+python3 -m venv venv
+source venv/bin/activate
 pip install -r requirements.txt
 
 # Configure
@@ -38,63 +43,63 @@ cold-email-engine/
 │   │   └── email_generator.py
 │   ├── sender/          # SMTP delivery
 │   │   └── email_sender.py
+│   ├── verifier/        # Email verification
+│   │   └── email_verifier.py
+│   ├── leads/           # Lead management
+│   │   └── lead_manager.py
+│   ├── sequences/       # Follow-up sequences
+│   │   └── followup.py
 │   ├── dashboard/       # Web UI
 │   │   ├── app.py
 │   │   ├── templates/
 │   │   └── static/
 │   └── main.py          # CLI pipeline
 ├── data/
-│   └── campaigns/       # Campaign outputs
-├── templates/           # Email templates
-├── config/
+│   ├── campaigns/       # Campaign outputs
+│   ├── leads/           # Saved lead lists
+│   └── sequences/       # Sequence tracking
 ├── .env.example
 └── requirements.txt
 ```
 
+## Dashboard Pages
+
+- `/` — Dashboard home (campaigns, lead lists, sequences)
+- `/campaign/new` — Create & run campaign
+- `/leads` — Lead management (CSV import, manual entry, dedup)
+- `/verify` — Email verification
+- `/sequences` — Follow-up sequence management
+- `/campaign/<id>` — Campaign details
+- `/leads/<name>` — View leads in list
+- `/sequences/<name>` — Sequence stats & pending sends
+
 ## API Endpoints
 
-- `GET /` — Dashboard
-- `GET /campaign/new` — New campaign form
-- `POST /campaign/new` — Run campaign
-- `GET /campaign/<id>` — Campaign details
-- `POST /api/scrape` — Scrape website
-- `POST /api/generate` — Generate email
+- `POST /api/scrape` — Scrape website for lead data
+- `POST /api/generate` — Generate personalized email
+- `POST /api/verify` — Verify email addresses
 
-## Usage
+## Email Verification
 
-### CLI
-```python
-from src.main import ColdEmailEngine
+Checks performed:
+1. **Syntax** — RFC-compliant email format
+2. **Domain** — Domain exists and resolves
+3. **MX Records** — Mail server configured
+4. **Disposable** — Temporary email detection
+5. **Role-based** — info@, support@ detection
 
-engine = ColdEmailEngine()
+## Follow-up Sequences
 
-result = engine.run_campaign(
-    leads=['https://company.com'],
-    product_description="We build AI chatbots",
-    sender_name="John",
-    sender_company="BotBuilder",
-    dry_run=True,
-)
-```
-
-### API
-```bash
-# Scrape
-curl -X POST http://localhost:5000/api/scrape \
-  -H "Content-Type: application/json" \
-  -d '{"url": "https://company.com"}'
-
-# Generate
-curl -X POST http://localhost:5000/api/generate \
-  -H "Content-Type: application/json" \
-  -d '{"lead": {...}, "product": "...", "sender_name": "...", "sender_company": "..."}'
-```
+- Create multi-step sequences with custom delays
+- Personalization with `{{name}}`, `{{company}}` placeholders
+- Auto-stop on reply
+- Track sent, replied, bounced, completed
 
 ## Monetization
 
 - Free tier: 10 emails/day
-- Pro ($29/mo): 500 emails/day + analytics
-- Enterprise ($99/mo): Unlimited + API access + custom templates
+- Pro ($29/mo): 500 emails/day + sequences + verification
+- Enterprise ($99/mo): Unlimited + API + custom templates
 
 ## License
 
