@@ -12,6 +12,8 @@ AI-powered cold email automation — scrape leads, generate personalized emails 
 - 📋 **CSV Import** — Import leads from spreadsheets
 - 📧 **Email Verification** — Check email validity (syntax, domain, MX, disposable)
 - 🔄 **Follow-up Sequences** — Multi-step auto follow-ups with delays
+- 🔐 **User Auth** — Register, login, sessions
+- 💳 **Payments** — LemonSqueezy integration with license keys
 
 ## Quick Start
 
@@ -27,9 +29,6 @@ cp .env.example .env
 
 # Run dashboard
 python src/dashboard/app.py
-
-# Or run CLI
-python src/main.py
 ```
 
 ## Architecture
@@ -37,69 +36,68 @@ python src/main.py
 ```
 cold-email-engine/
 ├── src/
+│   ├── auth/            # User authentication
+│   │   └── user_manager.py
+│   ├── payments/        # LemonSqueezy integration
+│   │   └── lemonsqueezy.py
 │   ├── scraper/         # Lead enrichment
-│   │   └── lead_scraper.py
 │   ├── generator/       # AI email writer
-│   │   └── email_generator.py
 │   ├── sender/          # SMTP delivery
-│   │   └── email_sender.py
 │   ├── verifier/        # Email verification
-│   │   └── email_verifier.py
 │   ├── leads/           # Lead management
-│   │   └── lead_manager.py
 │   ├── sequences/       # Follow-up sequences
-│   │   └── followup.py
 │   ├── dashboard/       # Web UI
-│   │   ├── app.py
-│   │   ├── templates/
-│   │   └── static/
 │   └── main.py          # CLI pipeline
 ├── data/
 │   ├── campaigns/       # Campaign outputs
 │   ├── leads/           # Saved lead lists
-│   └── sequences/       # Sequence tracking
+│   ├── sequences/       # Sequence tracking
+│   ├── users/           # User data
+│   └── orders/          # Payment orders
 ├── .env.example
 └── requirements.txt
 ```
 
 ## Dashboard Pages
 
-- `/` — Dashboard home (campaigns, lead lists, sequences)
+- `/login` — User login
+- `/register` — New account
+- `/dashboard` — Main dashboard
 - `/campaign/new` — Create & run campaign
 - `/leads` — Lead management (CSV import, manual entry, dedup)
 - `/verify` — Email verification
 - `/sequences` — Follow-up sequence management
-- `/campaign/<id>` — Campaign details
-- `/leads/<name>` — View leads in list
-- `/sequences/<name>` — Sequence stats & pending sends
+- `/pricing` — Plan comparison & upgrade
+- `/settings` — SMTP config, API keys
+
+## Pricing Plans
+
+| Plan | Price | Emails/Day | Features |
+|------|-------|------------|----------|
+| Free | $0 | 10 | Basic generation, CSV import, verification |
+| Pro | $29/mo | 500 | + Sequences, API access, priority support |
+| Enterprise | $99/mo | Unlimited | + White-label, custom integrations, SLA |
+
+## LemonSqueezy Setup
+
+1. Create account at [lemonsqueezy.com](https://lemonsqueezy.com)
+2. Create products for Pro ($29) and Enterprise ($99)
+3. Get API key from Settings > API
+4. Set webhook URL: `https://yourdomain.com/webhook/lemonsqueezy`
+5. Add to `.env`:
+   ```
+   LEMONSQUEEZY_API_KEY=your-key
+   LEMONSQUEEZY_WEBHOOK_SECRET=your-secret
+   LEMONSQUEEZY_STORE_ID=your-store
+   LEMONSQUEEZY_VARIANT_PRO=variant-id
+   LEMONSQUEEZY_VARIANT_ENTERPRISE=variant-id
+   ```
 
 ## API Endpoints
 
 - `POST /api/scrape` — Scrape website for lead data
 - `POST /api/generate` — Generate personalized email
 - `POST /api/verify` — Verify email addresses
-
-## Email Verification
-
-Checks performed:
-1. **Syntax** — RFC-compliant email format
-2. **Domain** — Domain exists and resolves
-3. **MX Records** — Mail server configured
-4. **Disposable** — Temporary email detection
-5. **Role-based** — info@, support@ detection
-
-## Follow-up Sequences
-
-- Create multi-step sequences with custom delays
-- Personalization with `{{name}}`, `{{company}}` placeholders
-- Auto-stop on reply
-- Track sent, replied, bounced, completed
-
-## Monetization
-
-- Free tier: 10 emails/day
-- Pro ($29/mo): 500 emails/day + sequences + verification
-- Enterprise ($99/mo): Unlimited + API + custom templates
 
 ## License
 
