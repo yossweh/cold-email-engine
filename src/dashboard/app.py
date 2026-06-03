@@ -1,6 +1,6 @@
 """
 Cold Email Engine — Main Dashboard App
-Auth, payments, campaigns, leads, verification, sequences
+All routes: auth, payments, campaigns, leads, verification, sequences
 """
 import os
 import sys
@@ -18,16 +18,24 @@ from src.verifier.email_verifier import EmailVerifier
 from src.sequences.followup import FollowUpSequence, DEFAULT_TEMPLATES
 from src.auth.user_manager import UserManager, login_required, get_current_user
 from src.payments.lemonsqueezy import LemonSqueezy, PLANS
+from src.payments.handler import payment_handler
+
+# Import blueprints
+from src.dashboard.webhooks import webhook_bp
+from src.dashboard.payments import payment_bp
 
 app = Flask(__name__, template_folder='../dashboard/templates', static_folder='../dashboard/static')
 app.secret_key = os.getenv('DASHBOARD_SECRET', 'dev-secret-change-me')
+
+# Register blueprints
+app.register_blueprint(webhook_bp)
+app.register_blueprint(payment_bp)
 
 engine = None
 lead_manager = LeadManager()
 verifier = EmailVerifier()
 sequences = FollowUpSequence()
 user_manager = UserManager()
-payment = LemonSqueezy()
 
 
 def get_engine():
@@ -348,57 +356,12 @@ def sequence_detail(seq_name):
     )
 
 
-# ==================== PRICING & PAYMENT ROUTES ====================
+# ==================== PRICING & SETTINGS ====================
 
 @app.route('/pricing')
 def pricing():
     user = get_current_user()
     return render_template('pricing.html', user=user, plans=PLANS)
-
-
-@app.route('/subscribe/<plan>', methods=['POST'])
-@login_required
-def subscribe(plan):
-    user = get_current_user()
-
-    if plan not in PLANS or plan == 'free':
-        flash('Invalid plan', 'error')
-        return redirect(url_for('pricing'))
-
-    # Create LemonSqueezy checkout
-    variant_id = os.getenv(f'LEMONSQUEEZY_VARIANT_{plan.upper()}', '')
-    if not variant_id:
-        # Redirect to LemonSqueezy directly
-        checkout_url = os.getenv(f'LEMONSQUEEZY_CHECKOUT_{plan.upper()}', '/pricing')
-        return redirect(checkout_url)
-
-    result = payment.create_checkout(
-        variant_id=variant_id,
-        email=user['email'],
-        custom_data={'email': user['email'], 'plan': plan}
-    )
-
-    checkout_url = result.get('data', {}).get('attributes', {}).get('url')
-    if checkout_url:
-        return redirect(checkout_url)
-
-    flash('Error creating checkout. Please try again.', 'error')
-    return redirect(url_for('pricing'))
-
-
-@app.route('/webhook/lemonsqueezy', methods=['POST'])
-def webhook():
-    """Handle LemonSqueezy webhooks."""
-    payload = request.get_data()
-    signature = request.headers.get('X-Signature', '')
-
-    if not payment.verify_webhook(payload, signature):
-        abort(401)
-
-    data = request.get_json()
-    result = payment.handle_webhook(data)
-
-    return jsonify(result)
 
 
 @app.route('/settings', methods=['GET', 'POST'])

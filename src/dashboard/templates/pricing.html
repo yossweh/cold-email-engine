@@ -1,3 +1,7 @@
+"""
+Cold Email Engine — Pricing Page with Payment Providers
+LemonSqueezy (international) + Midtrans (Indonesia)
+"""
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -7,7 +11,7 @@
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #0a0a0a; color: #e0e0e0; }
-        .container { max-width: 1000px; margin: 0 auto; padding: 40px 20px; }
+        .container { max-width: 1200px; margin: 0 auto; padding: 40px 20px; }
         h1 { color: #00ff88; text-align: center; margin-bottom: 10px; font-size: 2.5em; }
         .subtitle { text-align: center; color: #888; margin-bottom: 50px; font-size: 1.1em; }
         .pricing { display: flex; gap: 30px; justify-content: center; flex-wrap: wrap; }
@@ -18,14 +22,18 @@
         .plan-name { font-size: 1.5em; color: #fff; margin-bottom: 10px; }
         .plan-price { font-size: 3em; color: #00ff88; margin: 15px 0; }
         .plan-price span { font-size: 0.4em; color: #888; }
+        .plan-price-idr { color: #888; font-size: 0.8em; margin-top: 5px; }
         .plan-features { list-style: none; margin: 20px 0; text-align: left; }
         .plan-features li { padding: 8px 0; border-bottom: 1px solid #222; }
         .plan-features li::before { content: "✓ "; color: #00ff88; }
         .btn { display: block; padding: 12px 24px; background: #00ff88; color: #000; text-decoration: none; border-radius: 5px; font-weight: bold; font-size: 16px; margin-top: 20px; border: none; cursor: pointer; }
         .btn:hover { background: #00cc6a; }
         .btn-secondary { background: #333; color: #fff; }
+        .btn-idr { background: #ff6b35; margin-top: 10px; }
+        .btn-idr:hover { background: #e55a2b; }
         .current-plan { background: #333; color: #888; cursor: default; }
         .current-plan:hover { background: #333; }
+        .payment-methods { margin-top: 10px; color: #888; font-size: 12px; }
     </style>
 </head>
 <body>
@@ -37,6 +45,7 @@
             <div class="plan">
                 <div class="plan-name">Free</div>
                 <div class="plan-price">$0 <span>/month</span></div>
+                <div class="plan-price-idr">Gratis</div>
                 <ul class="plan-features">
                     <li>10 emails/day</li>
                     <li>Basic email generation</li>
@@ -54,6 +63,7 @@
             <div class="plan featured">
                 <div class="plan-name">Pro</div>
                 <div class="plan-price">$29 <span>/month</span></div>
+                <div class="plan-price-idr">Rp 450.000/bln</div>
                 <ul class="plan-features">
                     <li>500 emails/day</li>
                     <li>Everything in Free</li>
@@ -66,8 +76,14 @@
                 <button class="btn current-plan" disabled>Current Plan</button>
                 {% elif user %}
                 <form method="POST" action="/subscribe/pro">
-                    <button type="submit" class="btn">Upgrade to Pro</button>
+                    <button type="submit" class="btn">💳 Pay with Card ($29)</button>
                 </form>
+                <form method="POST" action="/subscribe/pro/idr">
+                    <button type="submit" class="btn btn-idr">🇮🇩 Pay with QRIS/GoPay (Rp 450rb)</button>
+                </form>
+                <div class="payment-methods">
+                    Card: Visa, Mastercard | IDR: QRIS, GoPay, OVO, VA Bank
+                </div>
                 {% else %}
                 <a href="/register" class="btn">Get Started</a>
                 {% endif %}
@@ -76,6 +92,7 @@
             <div class="plan">
                 <div class="plan-name">Enterprise</div>
                 <div class="plan-price">$99 <span>/month</span></div>
+                <div class="plan-price-idr">Rp 1.550.000/bln</div>
                 <ul class="plan-features">
                     <li>Unlimited emails</li>
                     <li>Everything in Pro</li>
@@ -88,12 +105,20 @@
                 <button class="btn current-plan" disabled>Current Plan</button>
                 {% elif user %}
                 <form method="POST" action="/subscribe/enterprise">
-                    <button type="submit" class="btn">Upgrade to Enterprise</button>
+                    <button type="submit" class="btn">💳 Pay with Card ($99)</button>
+                </form>
+                <form method="POST" action="/subscribe/enterprise/idr">
+                    <button type="submit" class="btn btn-idr">🇮🇩 Pay with QRIS/GoPay (Rp 1.5jt)</button>
                 </form>
                 {% else %}
                 <a href="/register" class="btn">Get Started</a>
                 {% endif %}
             </div>
+        </div>
+
+        <div style="text-align: center; margin-top: 50px; color: #888;">
+            <p>🔒 Secure payments powered by LemonSqueezy & Midtrans</p>
+            <p style="margin-top: 10px;">30-day money back guarantee</p>
         </div>
     </div>
 </body>
