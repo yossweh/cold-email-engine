@@ -3,78 +3,159 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cold Email Engine</title>
+    <title>Dashboard — Obsidian</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #0a0a0a; color: #e0e0e0; }
         .container { max-width: 1200px; margin: 0 auto; padding: 20px; }
-        h1 { color: #00ff88; margin-bottom: 30px; }
-        .card { background: #1a1a1a; border: 1px solid #333; border-radius: 8px; padding: 20px; margin-bottom: 20px; }
-        .btn { display: inline-block; padding: 10px 20px; background: #00ff88; color: #000; text-decoration: none; border-radius: 5px; font-weight: bold; border: none; cursor: pointer; }
-        .btn:hover { background: #00cc6a; }
-        .btn-secondary { background: #333; color: #fff; }
-        .stats { display: flex; gap: 20px; margin-bottom: 20px; }
-        .stat { flex: 1; background: #1a1a1a; border: 1px solid #333; border-radius: 8px; padding: 20px; text-align: center; }
-        .stat-number { font-size: 2em; color: #00ff88; }
-        .stat-label { color: #888; margin-top: 5px; }
-        table { width: 100%; border-collapse: collapse; }
-        th, td { padding: 12px; text-align: left; border-bottom: 1px solid #333; }
-        th { color: #888; }
-        .badge { padding: 3px 10px; border-radius: 12px; font-size: 12px; }
-        .badge-green { background: #00ff8833; color: #00ff88; }
-        .badge-red { background: #ff444433; color: #ff4444; }
+        .nav { display: flex; justify-content: space-between; align-items: center; padding: 15px 0; border-bottom: 1px solid #1a1a1a; margin-bottom: 30px; }
+        .nav-brand { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+        .nav-icon { width: 35px; height: 35px; background: linear-gradient(135deg, #1a1a2e, #16213e); border: 1px solid #4a4a6a; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 16px; }
+        .nav-title { color: #e0e0e0; font-size: 1.2em; letter-spacing: 2px; }
+        .nav-links { display: flex; gap: 25px; align-items: center; }
+        .nav-links a { color: #666; text-decoration: none; font-size: 14px; transition: color 0.2s; }
+        .nav-links a:hover { color: #aaa; }
+        .nav-user { display: flex; align-items: center; gap: 15px; }
+        .nav-plan { padding: 4px 12px; border-radius: 12px; font-size: 12px; font-weight: bold; letter-spacing: 1px; }
+        .plan-free { background: #1a1a1a; color: #666; border: 1px solid #333; }
+        .plan-pro { background: #4a4a6a20; color: #8a8aba; border: 1px solid #4a4a6a; }
+        .plan-enterprise { background: #ffaa0020; color: #ffaa00; border: 1px solid #ffaa0040; }
+        .stats { display: flex; gap: 20px; margin-bottom: 30px; }
+        .stat { flex: 1; background: #111; border: 1px solid #1a1a1a; border-radius: 12px; padding: 25px; }
+        .stat-label { color: #555; font-size: 13px; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }
+        .stat-value { font-size: 2.5em; font-weight: 300; color: #e0e0e0; }
+        .stat-sub { color: #555; font-size: 13px; margin-top: 5px; }
+        .section { margin-bottom: 30px; }
+        .section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+        .section-title { color: #888; font-size: 14px; text-transform: uppercase; letter-spacing: 1px; }
+        .card { background: #111; border: 1px solid #1a1a1a; border-radius: 12px; padding: 20px; margin-bottom: 15px; }
+        .card-header { display: flex; justify-content: space-between; align-items: center; }
+        .card-title { color: #e0e0e0; font-size: 16px; }
+        .card-meta { color: #555; font-size: 13px; }
+        .btn { display: inline-block; padding: 10px 20px; background: linear-gradient(135deg, #2a2a3e, #3a3a5e); color: #fff; text-decoration: none; border-radius: 8px; font-size: 14px; border: 1px solid #4a4a6a; cursor: pointer; transition: all 0.2s; }
+        .btn:hover { background: linear-gradient(135deg, #3a3a4e, #4a4a6e); border-color: #6a6a8a; }
+        .btn-sm { padding: 6px 14px; font-size: 12px; }
+        .btn-secondary { background: transparent; border-color: #333; color: #888; }
+        .btn-secondary:hover { border-color: #555; color: #aaa; }
+        .badge { padding: 4px 10px; border-radius: 10px; font-size: 11px; }
+        .badge-green { background: #00ff8820; color: #00ff88; border: 1px solid #00ff8840; }
+        .badge-red { background: #ff444420; color: #ff6666; border: 1px solid #ff444440; }
+        .badge-yellow { background: #ffaa0020; color: #ffaa00; border: 1px solid #ffaa0040; }
+        .quick-actions { display: flex; gap: 15px; margin-bottom: 30px; }
+        .quick-action { flex: 1; background: #111; border: 1px solid #1a1a1a; border-radius: 12px; padding: 20px; text-align: center; text-decoration: none; transition: all 0.2s; }
+        .quick-action:hover { border-color: #4a4a6a; background: #0f0f1a; }
+        .quick-action-icon { font-size: 24px; margin-bottom: 10px; }
+        .quick-action-label { color: #888; font-size: 13px; }
+        .empty { text-align: center; padding: 40px; color: #444; }
+        .flash { padding: 12px; border-radius: 8px; margin-bottom: 20px; }
+        .flash-success { background: #00ff8820; border: 1px solid #00ff8840; color: #00ff88; }
+        .flash-error { background: #ff444420; border: 1px solid #ff444440; color: #ff6666; }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>📧 Cold Email Engine</h1>
+        <nav class="nav">
+            <a href="/dashboard" class="nav-brand">
+                <div class="nav-icon">◆</div>
+                <span class="nav-title">OBSIDIAN</span>
+            </a>
+            <div class="nav-links">
+                <a href="/campaign/new">Campaigns</a>
+                <a href="/leads">Leads</a>
+                <a href="/verify">Verify</a>
+                <a href="/sequences">Sequences</a>
+                <a href="/pricing">Pricing</a>
+                <a href="/settings">Settings</a>
+            </div>
+            <div class="nav-user">
+                <span class="nav-plan plan-{{ user.plan }}">{{ user.plan|upper }}</span>
+                <a href="/logout" style="color: #666; text-decoration: none; font-size: 13px;">Logout</a>
+            </div>
+        </nav>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+        {% for category, message in messages %}
+        <div class="flash flash-{{ category }}">{{ message }}</div>
+        {% endfor %}
+        {% endif %}
+        {% endwith %}
 
         <div class="stats">
             <div class="stat">
-                <div class="stat-number">{{ campaigns|length }}</div>
+                <div class="stat-label">Emails Today</div>
+                <div class="stat-value">{{ usage.used|default(0) }}</div>
+                <div class="stat-sub">of {{ usage.limit|default(10) }} limit</div>
+            </div>
+            <div class="stat">
                 <div class="stat-label">Campaigns</div>
+                <div class="stat-value">{{ campaigns|length }}</div>
+                <div class="stat-sub">total campaigns</div>
             </div>
             <div class="stat">
-                <div class="stat-number">{{ campaigns|map(attribute='sent')|select|sum }}</div>
-                <div class="stat-label">Emails Sent</div>
+                <div class="stat-label">Lead Lists</div>
+                <div class="stat-value">{{ lead_lists|length }}</div>
+                <div class="stat-sub">saved lists</div>
             </div>
             <div class="stat">
-                <div class="stat-number">{{ campaigns|map(attribute='failed')|select|sum }}</div>
-                <div class="stat-label">Failed</div>
+                <div class="stat-label">Sequences</div>
+                <div class="stat-value">{{ sequences|length }}</div>
+                <div class="stat-sub">active sequences</div>
             </div>
         </div>
 
-        <a href="/campaign/new" class="btn">+ New Campaign</a>
-
-        <div class="card" style="margin-top: 20px;">
-            <h2>Recent Campaigns</h2>
-            {% if campaigns %}
-            <table>
-                <thead>
-                    <tr>
-                        <th>Campaign</th>
-                        <th>Total</th>
-                        <th>Sent</th>
-                        <th>Failed</th>
-                        <th></th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for c in campaigns %}
-                    <tr>
-                        <td>{{ c.id }}</td>
-                        <td>{{ c.total|default('-') }}</td>
-                        <td><span class="badge badge-green">{{ c.sent|default(0) }}</span></td>
-                        <td><span class="badge badge-red">{{ c.failed|default(0) }}</span></td>
-                        <td><a href="/campaign/{{ c.id }}" class="btn btn-secondary" style="padding: 5px 15px;">View</a></td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-            {% else %}
-            <p style="color: #888; margin-top: 20px;">No campaigns yet. Create one to get started!</p>
-            {% endif %}
+        <div class="quick-actions">
+            <a href="/campaign/new" class="quick-action">
+                <div class="quick-action-icon">📧</div>
+                <div class="quick-action-label">New Campaign</div>
+            </a>
+            <a href="/leads" class="quick-action">
+                <div class="quick-action-icon">📋</div>
+                <div class="quick-action-label">Import Leads</div>
+            </a>
+            <a href="/verify" class="quick-action">
+                <div class="quick-action-icon">✅</div>
+                <div class="quick-action-label">Verify Emails</div>
+            </a>
+            <a href="/sequences" class="quick-action">
+                <div class="quick-action-icon">🔄</div>
+                <div class="quick-action-label">Sequences</div>
+            </a>
         </div>
+
+        {% if campaigns %}
+        <div class="section">
+            <div class="section-header">
+                <span class="section-title">Recent Campaigns</span>
+                <a href="/campaign/new" class="btn btn-sm btn-secondary">+ New</a>
+            </div>
+            {% for c in campaigns %}
+            <div class="card">
+                <div class="card-header">
+                    <span class="card-title">{{ c.id }}</span>
+                    <div>
+                        {% if c.sent is defined %}
+                        <span class="badge badge-green">{{ c.sent }} sent</span>
+                        {% if c.failed %}
+                        <span class="badge badge-red">{{ c.failed }} failed</span>
+                        {% endif %}
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="card-meta">{{ c.total|default(0) }} total emails</div>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        {% if not campaigns and not lead_lists %}
+        <div class="empty">
+            <p style="font-size: 48px; margin-bottom: 20px;">◆</p>
+            <p style="font-size: 18px; margin-bottom: 10px;">Welcome to Obsidian</p>
+            <p>Start by creating a campaign or importing leads</p>
+            <a href="/campaign/new" class="btn" style="margin-top: 20px;">Create First Campaign</a>
+        </div>
+        {% endif %}
     </div>
 </body>
 </html>

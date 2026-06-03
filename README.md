@@ -1,6 +1,8 @@
-# 📧 Cold Email Engine
+# 🖤 Obsidian — AI Cold Email Engine
 
-AI-powered cold email automation — scrape leads, generate personalized emails with Claude, send via SMTP.
+**By Obsidian Labs**
+
+AI-powered cold email automation — scrape leads, generate personalized emails with Claude, send via SMTP, auto follow-ups.
 
 ## Features
 
@@ -13,7 +15,7 @@ AI-powered cold email automation — scrape leads, generate personalized emails 
 - 📧 **Email Verification** — Check email validity (syntax, domain, MX, disposable)
 - 🔄 **Follow-up Sequences** — Multi-step auto follow-ups with delays
 - 🔐 **User Auth** — Register, login, sessions
-- 💳 **Payments** — LemonSqueezy integration with license keys
+- 💳 **Payments** — LemonSqueezy (USD) + Midtrans (IDR)
 
 ## Quick Start
 
@@ -27,19 +29,17 @@ pip install -r requirements.txt
 cp .env.example .env
 # Edit .env with your API keys
 
-# Run dashboard
+# Run
 python src/dashboard/app.py
 ```
 
 ## Architecture
 
 ```
-cold-email-engine/
+obsidian/
 ├── src/
 │   ├── auth/            # User authentication
-│   │   └── user_manager.py
-│   ├── payments/        # LemonSqueezy integration
-│   │   └── lemonsqueezy.py
+│   ├── payments/        # LemonSqueezy + Midtrans
 │   ├── scraper/         # Lead enrichment
 │   ├── generator/       # AI email writer
 │   ├── sender/          # SMTP delivery
@@ -58,47 +58,41 @@ cold-email-engine/
 └── requirements.txt
 ```
 
-## Dashboard Pages
+## Pricing
 
-- `/login` — User login
-- `/register` — New account
+| Plan | USD | IDR | Emails/Day |
+|------|-----|-----|------------|
+| Free | $0 | Gratis | 10 |
+| Pro | $29/bln | Rp 450rb/bln | 500 |
+| Enterprise | $99/bln | Rp 1.5jt/bln | Unlimited |
+
+## Payment Flow
+
+```
+Customer bayar → Webhook → Auto-activate → Langsung Pro
+```
+
+- **International:** LemonSqueezy (Visa, Mastercard, PayPal)
+- **Indonesia:** Midtrans (QRIS, GoPay, OVO, VA Bank)
+
+## Dashboard
+
+- `/login` — Login
+- `/register` — Register
 - `/dashboard` — Main dashboard
-- `/campaign/new` — Create & run campaign
-- `/leads` — Lead management (CSV import, manual entry, dedup)
+- `/campaign/new` — Create campaign
+- `/leads` — Lead management
 - `/verify` — Email verification
-- `/sequences` — Follow-up sequence management
-- `/pricing` — Plan comparison & upgrade
-- `/settings` — SMTP config, API keys
+- `/sequences` — Follow-up sequences
+- `/pricing` — Plans & upgrade
+- `/settings` — SMTP & API config
 
-## Pricing Plans
+## API
 
-| Plan | Price | Emails/Day | Features |
-|------|-------|------------|----------|
-| Free | $0 | 10 | Basic generation, CSV import, verification |
-| Pro | $29/mo | 500 | + Sequences, API access, priority support |
-| Enterprise | $99/mo | Unlimited | + White-label, custom integrations, SLA |
-
-## LemonSqueezy Setup
-
-1. Create account at [lemonsqueezy.com](https://lemonsqueezy.com)
-2. Create products for Pro ($29) and Enterprise ($99)
-3. Get API key from Settings > API
-4. Set webhook URL: `https://yourdomain.com/webhook/lemonsqueezy`
-5. Add to `.env`:
-   ```
-   LEMONSQUEEZY_API_KEY=your-key
-   LEMONSQUEEZY_WEBHOOK_SECRET=your-secret
-   LEMONSQUEEZY_STORE_ID=your-store
-   LEMONSQUEEZY_VARIANT_PRO=variant-id
-   LEMONSQUEEZY_VARIANT_ENTERPRISE=variant-id
-   ```
-
-## API Endpoints
-
-- `POST /api/scrape` — Scrape website for lead data
-- `POST /api/generate` — Generate personalized email
-- `POST /api/verify` — Verify email addresses
+- `POST /api/scrape` — Scrape website
+- `POST /api/generate` — Generate email
+- `POST /api/verify` — Verify emails
 
 ## License
 
-MIT
+MIT — Obsidian Labs

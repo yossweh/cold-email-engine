@@ -3,31 +3,47 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Settings — Cold Email Engine</title>
+    <title>Settings — Obsidian</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #0a0a0a; color: #e0e0e0; }
         .container { max-width: 800px; margin: 0 auto; padding: 20px; }
-        h1 { color: #00ff88; margin-bottom: 30px; }
-        h2 { color: #fff; margin: 20px 0 10px; }
-        .card { background: #1a1a1a; border: 1px solid #333; border-radius: 8px; padding: 20px; margin-bottom: 20px; }
-        .btn { display: inline-block; padding: 10px 20px; background: #00ff88; color: #000; text-decoration: none; border-radius: 5px; font-weight: bold; border: none; cursor: pointer; font-size: 14px; }
-        .btn:hover { background: #00cc6a; }
-        .btn-secondary { background: #333; color: #fff; }
-        label { display: block; color: #888; margin-bottom: 5px; margin-top: 15px; }
-        input { width: 100%; padding: 10px; background: #0a0a0a; border: 1px solid #333; border-radius: 5px; color: #fff; font-size: 14px; }
-        .flash { padding: 10px; border-radius: 5px; margin-bottom: 15px; }
-        .flash-success { background: #00ff8833; border: 1px solid #00ff88; color: #00ff88; }
-        .flash-error { background: #ff444433; border: 1px solid #ff4444; color: #ff4444; }
-        .plan-badge { display: inline-block; padding: 5px 15px; border-radius: 20px; font-weight: bold; }
-        .plan-free { background: #333; color: #888; }
-        .plan-pro { background: #00ff8833; color: #00ff88; }
-        .plan-enterprise { background: #ffaa0033; color: #ffaa00; }
+        .nav { display: flex; justify-content: space-between; align-items: center; padding: 15px 0; border-bottom: 1px solid #1a1a1a; margin-bottom: 30px; }
+        .nav-brand { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+        .nav-icon { width: 35px; height: 35px; background: linear-gradient(135deg, #1a1a2e, #16213e); border: 1px solid #4a4a6a; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 16px; }
+        .nav-title { color: #e0e0e0; font-size: 1.2em; letter-spacing: 2px; }
+        h1 { color: #e0e0e0; margin-bottom: 30px; font-weight: 300; font-size: 1.8em; }
+        h2 { color: #888; margin-bottom: 15px; font-size: 14px; text-transform: uppercase; letter-spacing: 1px; }
+        .card { background: #111; border: 1px solid #1a1a1a; border-radius: 12px; padding: 30px; margin-bottom: 20px; }
+        label { display: block; color: #666; margin-bottom: 6px; margin-top: 20px; font-size: 13px; text-transform: uppercase; letter-spacing: 1px; }
+        input { width: 100%; padding: 12px 15px; background: #0f0f0f; border: 1px solid #1a1a1a; border-radius: 8px; color: #fff; font-size: 14px; transition: border-color 0.2s; }
+        input:focus { outline: none; border-color: #4a4a6a; }
+        .btn { display: inline-block; padding: 12px 24px; background: linear-gradient(135deg, #2a2a3e, #3a3a5e); color: #fff; text-decoration: none; border-radius: 8px; font-weight: bold; border: 1px solid #4a4a6a; cursor: pointer; font-size: 14px; transition: all 0.2s; }
+        .btn:hover { background: linear-gradient(135deg, #3a3a4e, #4a4a6e); border-color: #6a6a8a; }
+        .btn-secondary { background: transparent; border-color: #333; color: #888; }
+        .btn-secondary:hover { border-color: #555; color: #aaa; }
+        .flash { padding: 12px; border-radius: 8px; margin-bottom: 20px; }
+        .flash-success { background: #00ff8820; border: 1px solid #00ff8840; color: #00ff88; }
+        .flash-error { background: #ff444420; border: 1px solid #ff444440; color: #ff6666; }
+        .plan-badge { display: inline-block; padding: 5px 15px; border-radius: 12px; font-size: 12px; font-weight: bold; letter-spacing: 1px; }
+        .plan-free { background: #1a1a1a; color: #666; border: 1px solid #333; }
+        .plan-pro { background: #4a4a6a20; color: #8a8aba; border: 1px solid #4a4a6a; }
+        .plan-enterprise { background: #ffaa0020; color: #ffaa00; border: 1px solid #ffaa0040; }
+        .info-row { display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid #1a1a1a; }
+        .info-label { color: #666; }
+        .info-value { color: #e0e0e0; }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>⚙️ Settings</h1>
+        <nav class="nav">
+            <a href="/dashboard" class="nav-brand">
+                <div class="nav-icon">◆</div>
+                <span class="nav-title">OBSIDIAN</span>
+            </a>
+        </nav>
+
+        <h1>Settings</h1>
 
         {% with messages = get_flashed_messages(with_categories=true) %}
         {% if messages %}
@@ -39,37 +55,64 @@
 
         <div class="card">
             <h2>Account</h2>
-            <p><strong>Email:</strong> {{ user.email }}</p>
-            <p><strong>Name:</strong> {{ user.name }}</p>
-            <p><strong>Plan:</strong> <span class="plan-badge plan-{{ user.plan }}">{{ user.plan|upper }}</span></p>
+            <div class="info-row">
+                <span class="info-label">Email</span>
+                <span class="info-value">{{ user.email }}</span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">Name</span>
+                <span class="info-value">{{ user.name }}</span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">Plan</span>
+                <span class="plan-badge plan-{{ user.plan }}">{{ user.plan|upper }}</span>
+            </div>
             {% if user.plan_expires %}
-            <p><strong>Expires:</strong> {{ user.plan_expires }}</p>
+            <div class="info-row">
+                <span class="info-label">Expires</span>
+                <span class="info-value">{{ user.plan_expires }}</span>
+            </div>
             {% endif %}
-            <a href="/pricing" class="btn btn-secondary" style="margin-top: 15px;">Change Plan</a>
+            <a href="/pricing" class="btn btn-secondary" style="margin-top: 20px;">Change Plan</a>
         </div>
 
         <div class="card">
             <h2>Email Settings</h2>
             <form method="POST">
-                <label for="from_name">From Name</label>
-                <input type="text" name="from_name" id="from_name" value="{{ user.settings.from_name|default('') }}" placeholder="John Doe">
+                <div style="display: flex; gap: 20px;">
+                    <div style="flex: 1;">
+                        <label for="from_name">From Name</label>
+                        <input type="text" name="from_name" id="from_name" value="{{ user.settings.from_name|default('') }}" placeholder="John Doe">
+                    </div>
+                    <div style="flex: 1;">
+                        <label for="from_email">From Email</label>
+                        <input type="email" name="from_email" id="from_email" value="{{ user.settings.from_email|default('') }}" placeholder="john@company.com">
+                    </div>
+                </div>
 
-                <label for="from_email">From Email</label>
-                <input type="email" name="from_email" id="from_email" value="{{ user.settings.from_email|default('') }}" placeholder="john@company.com">
+                <div style="display: flex; gap: 20px;">
+                    <div style="flex: 2;">
+                        <label for="smtp_host">SMTP Host</label>
+                        <input type="text" name="smtp_host" id="smtp_host" value="{{ user.settings.smtp_host|default('') }}" placeholder="smtp.gmail.com">
+                    </div>
+                    <div style="flex: 1;">
+                        <label for="smtp_port">Port</label>
+                        <input type="number" name="smtp_port" id="smtp_port" value="{{ user.settings.smtp_port|default(587) }}">
+                    </div>
+                </div>
 
-                <label for="smtp_host">SMTP Host</label>
-                <input type="text" name="smtp_host" id="smtp_host" value="{{ user.settings.smtp_host|default('') }}" placeholder="smtp.gmail.com">
+                <div style="display: flex; gap: 20px;">
+                    <div style="flex: 1;">
+                        <label for="smtp_user">SMTP Username</label>
+                        <input type="text" name="smtp_user" id="smtp_user" value="{{ user.settings.smtp_user|default('') }}" placeholder="your@email.com">
+                    </div>
+                    <div style="flex: 1;">
+                        <label for="smtp_password">SMTP Password</label>
+                        <input type="password" name="smtp_password" id="smtp_password" value="{{ user.settings.smtp_password|default('') }}" placeholder="app-password">
+                    </div>
+                </div>
 
-                <label for="smtp_port">SMTP Port</label>
-                <input type="number" name="smtp_port" id="smtp_port" value="{{ user.settings.smtp_port|default(587) }}">
-
-                <label for="smtp_user">SMTP Username</label>
-                <input type="text" name="smtp_user" id="smtp_user" value="{{ user.settings.smtp_user|default('') }}" placeholder="your@email.com">
-
-                <label for="smtp_password">SMTP Password</label>
-                <input type="password" name="smtp_password" id="smtp_password" value="{{ user.settings.smtp_password|default('') }}" placeholder="app-specific-password">
-
-                <button type="submit" class="btn" style="margin-top: 15px;">Save Settings</button>
+                <button type="submit" class="btn" style="margin-top: 25px;">Save Settings</button>
             </form>
         </div>
 
@@ -79,7 +122,7 @@
                 <label for="anthropic_api_key">Anthropic API Key</label>
                 <input type="password" name="anthropic_api_key" id="anthropic_api_key" value="{{ user.settings.anthropic_api_key|default('') }}" placeholder="sk-ant-xxx">
 
-                <button type="submit" class="btn" style="margin-top: 15px;">Save API Key</button>
+                <button type="submit" class="btn" style="margin-top: 20px;">Save API Key</button>
             </form>
         </div>
 
