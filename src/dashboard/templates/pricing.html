@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pricing — Cold Email Engine</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #0a0a0a; color: #e0e0e0; }
+        .container { max-width: 1000px; margin: 0 auto; padding: 40px 20px; }
+        h1 { color: #00ff88; text-align: center; margin-bottom: 10px; font-size: 2.5em; }
+        .subtitle { text-align: center; color: #888; margin-bottom: 50px; font-size: 1.1em; }
+        .pricing { display: flex; gap: 30px; justify-content: center; flex-wrap: wrap; }
+        .plan { background: #1a1a1a; border: 1px solid #333; border-radius: 12px; padding: 30px; width: 300px; text-align: center; transition: transform 0.2s; }
+        .plan:hover { transform: translateY(-5px); }
+        .plan.featured { border-color: #00ff88; background: #0a1a0a; position: relative; }
+        .plan.featured::before { content: "POPULAR"; position: absolute; top: -12px; left: 50%; transform: translateX(-50%); background: #00ff88; color: #000; padding: 4px 16px; border-radius: 12px; font-size: 12px; font-weight: bold; }
+        .plan-name { font-size: 1.5em; color: #fff; margin-bottom: 10px; }
+        .plan-price { font-size: 3em; color: #00ff88; margin: 15px 0; }
+        .plan-price span { font-size: 0.4em; color: #888; }
+        .plan-features { list-style: none; margin: 20px 0; text-align: left; }
+        .plan-features li { padding: 8px 0; border-bottom: 1px solid #222; }
+        .plan-features li::before { content: "✓ "; color: #00ff88; }
+        .btn { display: block; padding: 12px 24px; background: #00ff88; color: #000; text-decoration: none; border-radius: 5px; font-weight: bold; font-size: 16px; margin-top: 20px; border: none; cursor: pointer; }
+        .btn:hover { background: #00cc6a; }
+        .btn-secondary { background: #333; color: #fff; }
+        .current-plan { background: #333; color: #888; cursor: default; }
+        .current-plan:hover { background: #333; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Simple Pricing</h1>
+        <p class="subtitle">Start free, upgrade when you need more</p>
+
+        <div class="pricing">
+            <div class="plan">
+                <div class="plan-name">Free</div>
+                <div class="plan-price">$0 <span>/month</span></div>
+                <ul class="plan-features">
+                    <li>10 emails/day</li>
+                    <li>Basic email generation</li>
+                    <li>CSV import</li>
+                    <li>Email verification</li>
+                    <li>Community support</li>
+                </ul>
+                {% if user and user.plan == 'free' %}
+                <button class="btn current-plan" disabled>Current Plan</button>
+                {% else %}
+                <a href="/register" class="btn btn-secondary">Get Started</a>
+                {% endif %}
+            </div>
+
+            <div class="plan featured">
+                <div class="plan-name">Pro</div>
+                <div class="plan-price">$29 <span>/month</span></div>
+                <ul class="plan-features">
+                    <li>500 emails/day</li>
+                    <li>Everything in Free</li>
+                    <li>Follow-up sequences</li>
+                    <li>API access</li>
+                    <li>Priority support</li>
+                    <li>Custom templates</li>
+                </ul>
+                {% if user and user.plan == 'pro' %}
+                <button class="btn current-plan" disabled>Current Plan</button>
+                {% elif user %}
+                <form method="POST" action="/subscribe/pro">
+                    <button type="submit" class="btn">Upgrade to Pro</button>
+                </form>
+                {% else %}
+                <a href="/register" class="btn">Get Started</a>
+                {% endif %}
+            </div>
+
+            <div class="plan">
+                <div class="plan-name">Enterprise</div>
+                <div class="plan-price">$99 <span>/month</span></div>
+                <ul class="plan-features">
+                    <li>Unlimited emails</li>
+                    <li>Everything in Pro</li>
+                    <li>White-label</li>
+                    <li>Dedicated support</li>
+                    <li>Custom integrations</li>
+                    <li>SLA guarantee</li>
+                </ul>
+                {% if user and user.plan == 'enterprise' %}
+                <button class="btn current-plan" disabled>Current Plan</button>
+                {% elif user %}
+                <form method="POST" action="/subscribe/enterprise">
+                    <button type="submit" class="btn">Upgrade to Enterprise</button>
+                </form>
+                {% else %}
+                <a href="/register" class="btn">Get Started</a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</body>
+</html>
