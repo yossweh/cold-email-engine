@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Campaign {{ campaign_id }} — Cold Email Engine</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #0a0a0a; color: #e0e0e0; }
+        .container { max-width: 1000px; margin: 0 auto; padding: 20px; }
+        h1 { color: #00ff88; margin-bottom: 30px; }
+        h2 { color: #fff; margin: 20px 0 10px; }
+        .card { background: #1a1a1a; border: 1px solid #333; border-radius: 8px; padding: 20px; margin-bottom: 20px; }
+        .btn { display: inline-block; padding: 10px 20px; background: #00ff88; color: #000; text-decoration: none; border-radius: 5px; font-weight: bold; }
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        th, td { padding: 10px; text-align: left; border-bottom: 1px solid #333; }
+        th { color: #888; }
+        .email-preview { background: #111; padding: 15px; border-radius: 5px; margin: 10px 0; white-space: pre-wrap; font-family: monospace; font-size: 13px; }
+        .badge { padding: 3px 10px; border-radius: 12px; font-size: 12px; }
+        .badge-green { background: #00ff8833; color: #00ff88; }
+        .badge-red { background: #ff444433; color: #ff4444; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📊 Campaign {{ campaign_id }}</h1>
+
+        {% if generated %}
+        <h2>Generated Emails</h2>
+        {% for email in generated %}
+        <div class="card">
+            <p><strong>Subject:</strong> {{ email.subject|default('N/A') }}</p>
+            <p><strong>Personalization:</strong> {{ email.personalization_note|default('N/A') }}</p>
+            <p><strong>Confidence:</strong> {{ email.confidence|default('-') }}</p>
+            {% if email.body %}
+            <div class="email-preview">{{ email.body }}</div>
+            {% endif %}
+            {% if email.error %}
+            <p style="color: #ff4444;">Error: {{ email.error }}</p>
+            {% endif %}
+        </div>
+        {% endfor %}
+        {% endif %}
+
+        {% if send_log %}
+        <h2>Send Log</h2>
+        <div class="card">
+            <table>
+                <thead>
+                    <tr><th>To</th><th>Subject</th><th>Status</th><th>Time</th></tr>
+                </thead>
+                <tbody>
+                    {% for log in send_log %}
+                    <tr>
+                        <td>{{ log.to }}</td>
+                        <td>{{ log.subject|default('-') }}</td>
+                        <td><span class="badge {{ 'badge-green' if log.status == 'sent' else 'badge-red' }}">{{ log.status }}</span></td>
+                        <td>{{ log.timestamp|default('-') }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% endif %}
+
+        <a href="/" class="btn">← Dashboard</a>
+    </div>
+</body>
+</html>

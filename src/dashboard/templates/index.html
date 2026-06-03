@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cold Email Engine</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #0a0a0a; color: #e0e0e0; }
+        .container { max-width: 1200px; margin: 0 auto; padding: 20px; }
+        h1 { color: #00ff88; margin-bottom: 30px; }
+        .card { background: #1a1a1a; border: 1px solid #333; border-radius: 8px; padding: 20px; margin-bottom: 20px; }
+        .btn { display: inline-block; padding: 10px 20px; background: #00ff88; color: #000; text-decoration: none; border-radius: 5px; font-weight: bold; border: none; cursor: pointer; }
+        .btn:hover { background: #00cc6a; }
+        .btn-secondary { background: #333; color: #fff; }
+        .stats { display: flex; gap: 20px; margin-bottom: 20px; }
+        .stat { flex: 1; background: #1a1a1a; border: 1px solid #333; border-radius: 8px; padding: 20px; text-align: center; }
+        .stat-number { font-size: 2em; color: #00ff88; }
+        .stat-label { color: #888; margin-top: 5px; }
+        table { width: 100%; border-collapse: collapse; }
+        th, td { padding: 12px; text-align: left; border-bottom: 1px solid #333; }
+        th { color: #888; }
+        .badge { padding: 3px 10px; border-radius: 12px; font-size: 12px; }
+        .badge-green { background: #00ff8833; color: #00ff88; }
+        .badge-red { background: #ff444433; color: #ff4444; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📧 Cold Email Engine</h1>
+
+        <div class="stats">
+            <div class="stat">
+                <div class="stat-number">{{ campaigns|length }}</div>
+                <div class="stat-label">Campaigns</div>
+            </div>
+            <div class="stat">
+                <div class="stat-number">{{ campaigns|map(attribute='sent')|select|sum }}</div>
+                <div class="stat-label">Emails Sent</div>
+            </div>
+            <div class="stat">
+                <div class="stat-number">{{ campaigns|map(attribute='failed')|select|sum }}</div>
+                <div class="stat-label">Failed</div>
+            </div>
+        </div>
+
+        <a href="/campaign/new" class="btn">+ New Campaign</a>
+
+        <div class="card" style="margin-top: 20px;">
+            <h2>Recent Campaigns</h2>
+            {% if campaigns %}
+            <table>
+                <thead>
+                    <tr>
+                        <th>Campaign</th>
+                        <th>Total</th>
+                        <th>Sent</th>
+                        <th>Failed</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for c in campaigns %}
+                    <tr>
+                        <td>{{ c.id }}</td>
+                        <td>{{ c.total|default('-') }}</td>
+                        <td><span class="badge badge-green">{{ c.sent|default(0) }}</span></td>
+                        <td><span class="badge badge-red">{{ c.failed|default(0) }}</span></td>
+                        <td><a href="/campaign/{{ c.id }}" class="btn btn-secondary" style="padding: 5px 15px;">View</a></td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% else %}
+            <p style="color: #888; margin-top: 20px;">No campaigns yet. Create one to get started!</p>
+            {% endif %}
+        </div>
+    </div>
+</body>
+</html>

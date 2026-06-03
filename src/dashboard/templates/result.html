@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Campaign Result — Cold Email Engine</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #0a0a0a; color: #e0e0e0; }
+        .container { max-width: 800px; margin: 0 auto; padding: 20px; }
+        h1 { color: #00ff88; margin-bottom: 30px; }
+        .card { background: #1a1a1a; border: 1px solid #333; border-radius: 8px; padding: 20px; margin-bottom: 20px; }
+        .btn { display: inline-block; padding: 10px 20px; background: #00ff88; color: #000; text-decoration: none; border-radius: 5px; font-weight: bold; }
+        .stat-row { display: flex; gap: 20px; margin-bottom: 20px; }
+        .stat { flex: 1; text-align: center; padding: 15px; background: #222; border-radius: 8px; }
+        .stat-num { font-size: 2em; color: #00ff88; }
+        .stat-label { color: #888; margin-top: 5px; }
+        .success { color: #00ff88; }
+        .info { color: #00aaff; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>✅ Campaign Complete</h1>
+
+        <div class="stat-row">
+            <div class="stat">
+                <div class="stat-num">{{ result.leads_enriched }}</div>
+                <div class="stat-label">Leads Enriched</div>
+            </div>
+            <div class="stat">
+                <div class="stat-num">{{ result.emails_generated }}</div>
+                <div class="stat-label">Emails Generated</div>
+            </div>
+            <div class="stat">
+                <div class="stat-num">{{ result.emails_ready|default(result.emails_sent|default(0)) }}</div>
+                <div class="stat-label">{{ 'Ready' if result.mode == 'dry_run' else 'Sent' }}</div>
+            </div>
+        </div>
+
+        <div class="card">
+            <p><strong>Campaign ID:</strong> {{ result.campaign_id }}</p>
+            <p><strong>Mode:</strong> <span class="{{ 'info' if result.mode == 'dry_run' else 'success' }}">{{ result.mode|upper }}</span></p>
+            <p><strong>Output:</strong> {{ result.campaign_dir }}</p>
+        </div>
+
+        {% if result.mode == 'dry_run' %}
+        <div class="card">
+            <p style="color: #ffaa00;">⚠️ Dry Run mode — no emails were sent.</p>
+            <p style="margin-top: 10px;">To send for real, run again with <code>dry_run=False</code></p>
+        </div>
+        {% endif %}
+
+        <a href="/" class="btn">← Dashboard</a>
+        <a href="/campaign/new" class="btn" style="background: #333; color: #fff; margin-left: 10px;">New Campaign</a>
+    </div>
+</body>
+</html>

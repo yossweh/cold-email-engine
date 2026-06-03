@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>New Campaign — Cold Email Engine</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #0a0a0a; color: #e0e0e0; }
+        .container { max-width: 800px; margin: 0 auto; padding: 20px; }
+        h1 { color: #00ff88; margin-bottom: 30px; }
+        .card { background: #1a1a1a; border: 1px solid #333; border-radius: 8px; padding: 20px; margin-bottom: 20px; }
+        label { display: block; color: #888; margin-bottom: 5px; margin-top: 15px; }
+        input, textarea, select { width: 100%; padding: 10px; background: #0a0a0a; border: 1px solid #333; border-radius: 5px; color: #fff; font-size: 14px; }
+        textarea { min-height: 150px; resize: vertical; }
+        .btn { display: inline-block; padding: 12px 24px; background: #00ff88; color: #000; text-decoration: none; border-radius: 5px; font-weight: bold; border: none; cursor: pointer; font-size: 16px; margin-top: 20px; }
+        .btn:hover { background: #00cc6a; }
+        .btn-back { background: #333; color: #fff; margin-right: 10px; }
+        .checkbox-label { display: flex; align-items: center; gap: 10px; color: #e0e0e0; }
+        .checkbox-label input { width: auto; }
+        .hint { color: #666; font-size: 12px; margin-top: 5px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🚀 New Campaign</h1>
+
+        <form method="POST">
+            <div class="card">
+                <label for="leads">Target Leads</label>
+                <textarea name="leads" id="leads" placeholder="https://company1.com&#10;https://company2.com&#10;name@company3.com"></textarea>
+                <div class="hint">One URL or email per line</div>
+
+                <label for="product">Your Product/Service</label>
+                <textarea name="product" id="product" placeholder="We build AI chatbots that increase conversion by 40%..." style="min-height: 80px;"></textarea>
+
+                <label for="sender_name">Your Name</label>
+                <input type="text" name="sender_name" id="sender_name" placeholder="John Doe">
+
+                <label for="sender_company">Your Company</label>
+                <input type="text" name="sender_company" id="sender_company" placeholder="BotBuilder Inc">
+
+                <label for="tone">Tone</label>
+                <select name="tone" id="tone">
+                    <option value="professional">Professional</option>
+                    <option value="casual">Casual</option>
+                    <option value="friendly">Friendly</option>
+                    <option value="direct">Direct</option>
+                </select>
+
+                <label class="checkbox-label">
+                    <input type="checkbox" name="dry_run" checked>
+                    Dry Run (preview only, don't send)
+                </label>
+            </div>
+
+            <a href="/" class="btn btn-back">← Back</a>
+            <button type="submit" class="btn">Run Campaign</button>
+        </form>
+    </div>
+</body>
+</html>
