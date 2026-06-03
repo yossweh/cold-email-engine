@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ sequence_name }} — Cold Email Engine</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #0a0a0a; color: #e0e0e0; }
+        .container { max-width: 1000px; margin: 0 auto; padding: 20px; }
+        h1 { color: #00ff88; margin-bottom: 30px; }
+        h2 { color: #fff; margin: 20px 0 10px; }
+        .card { background: #1a1a1a; border: 1px solid #333; border-radius: 8px; padding: 20px; margin-bottom: 20px; }
+        .btn { display: inline-block; padding: 10px 20px; background: #00ff88; color: #000; text-decoration: none; border-radius: 5px; font-weight: bold; }
+        .btn-secondary { background: #333; color: #fff; }
+        .stats { display: flex; gap: 20px; margin-bottom: 20px; }
+        .stat { flex: 1; background: #222; border: 1px solid #333; border-radius: 8px; padding: 20px; text-align: center; }
+        .stat-num { font-size: 2em; color: #00ff88; }
+        .stat-label { color: #888; margin-top: 5px; }
+        table { width: 100%; border-collapse: collapse; }
+        th, td { padding: 10px; text-align: left; border-bottom: 1px solid #333; }
+        th { color: #888; }
+        .email-preview { background: #111; padding: 15px; border-radius: 5px; margin: 10px 0; white-space: pre-wrap; font-family: monospace; font-size: 13px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔄 {{ sequence_name }}</h1>
+
+        {% if stats and not stats.error %}
+        <div class="stats">
+            <div class="stat">
+                <div class="stat-num">{{ stats.total }}</div>
+                <div class="stat-label">Total Leads</div>
+            </div>
+            <div class="stat">
+                <div class="stat-num">{{ stats.active }}</div>
+                <div class="stat-label">Active</div>
+            </div>
+            <div class="stat">
+                <div class="stat-num">{{ stats.replied }}</div>
+                <div class="stat-label">Replied</div>
+            </div>
+            <div class="stat">
+                <div class="stat-num">{{ stats.completed }}</div>
+                <div class="stat-label">Completed</div>
+            </div>
+        </div>
+        {% endif %}
+
+        {% if pending %}
+        <h2>Pending Sends ({{ pending|length }})</h2>
+        <div class="card">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Email</th>
+                        <th>Name</th>
+                        <th>Step</th>
+                        <th>Subject</th>
+                        <th>Delay</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for p in pending %}
+                    <tr>
+                        <td>{{ p.email }}</td>
+                        <td>{{ p.name|default('-') }}</td>
+                        <td>{{ p.step + 1 }}</td>
+                        <td>{{ p.subject }}</td>
+                        <td>{{ p.delay_days }} days</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <h2>Preview First Email</h2>
+        <div class="card">
+            <p><strong>Subject:</strong> {{ pending[0].subject }}</p>
+            <div class="email-preview">{{ pending[0].body }}</div>
+        </div>
+        {% else %}
+        <div class="card">
+            <p style="color: #888;">No pending sends at the moment.</p>
+        </div>
+        {% endif %}
+
+        <a href="/sequences" class="btn btn-secondary">← Back to Sequences</a>
+    </div>
+</body>
+</html>

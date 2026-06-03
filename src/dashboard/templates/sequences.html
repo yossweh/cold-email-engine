@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Follow-up Sequences — Cold Email Engine</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #0a0a0a; color: #e0e0e0; }
+        .container { max-width: 1000px; margin: 0 auto; padding: 20px; }
+        h1 { color: #00ff88; margin-bottom: 30px; }
+        h2 { color: #fff; margin: 20px 0 10px; }
+        .card { background: #1a1a1a; border: 1px solid #333; border-radius: 8px; padding: 20px; margin-bottom: 20px; }
+        .btn { display: inline-block; padding: 10px 20px; background: #00ff88; color: #000; text-decoration: none; border-radius: 5px; font-weight: bold; border: none; cursor: pointer; font-size: 14px; }
+        .btn:hover { background: #00cc6a; }
+        .btn-secondary { background: #333; color: #fff; }
+        label { display: block; color: #888; margin-bottom: 5px; margin-top: 15px; }
+        input, textarea, select { width: 100%; padding: 10px; background: #0a0a0a; border: 1px solid #333; border-radius: 5px; color: #fff; font-size: 14px; }
+        textarea { min-height: 100px; resize: vertical; }
+        .step { background: #222; border: 1px solid #444; border-radius: 5px; padding: 15px; margin: 10px 0; }
+        .step-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+        .step-num { color: #00ff88; font-weight: bold; }
+        table { width: 100%; border-collapse: collapse; }
+        th, td { padding: 10px; text-align: left; border-bottom: 1px solid #333; }
+        th { color: #888; }
+        .flash { padding: 10px; border-radius: 5px; margin-bottom: 15px; }
+        .flash-success { background: #00ff8833; border: 1px solid #00ff88; color: #00ff88; }
+        .tabs { display: flex; gap: 10px; margin-bottom: 20px; }
+        .tab { padding: 10px 20px; background: #222; border: 1px solid #333; border-radius: 5px; cursor: pointer; color: #888; }
+        .tab.active { background: #00ff8833; border-color: #00ff88; color: #00ff88; }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔄 Follow-up Sequences</h1>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+        {% for category, message in messages %}
+        <div class="flash flash-{{ category }}">{{ message }}</div>
+        {% endfor %}
+        {% endif %}
+        {% endwith %}
+
+        <div class="tabs">
+            <div class="tab active" onclick="switchTab('create')">➕ Create</div>
+            <div class="tab" onclick="switchTab('start')">🚀 Start</div>
+            <div class="tab" onclick="switchTab('list')">📋 Sequences</div>
+        </div>
+
+        <div id="tab-create" class="tab-content active">
+            <div class="card">
+                <h2>Create New Sequence</h2>
+                <form method="POST">
+                    <input type="hidden" name="action" value="create">
+
+                    <label for="name">Sequence Name</label>
+                    <input type="text" name="name" id="name" placeholder="my-sequence">
+
+                    <label>Follow-up Steps</label>
+                    <div id="steps">
+                        <div class="step">
+                            <div class="step-header">
+                                <span class="step-num">Step 1 (Initial)</span>
+                            </div>
+                            <input type="text" name="subjects[]" placeholder="Subject line">
+                            <textarea name="bodies[]" placeholder="Email body... Use {{name}}, {{company}} for personalization"></textarea>
+                        </div>
+                        <div class="step">
+                            <div class="step-header">
+                                <span class="step-num">Step 2 (Follow-up)</span>
+                            </div>
+                            <input type="text" name="subjects[]" placeholder="Subject line">
+                            <textarea name="bodies[]" placeholder="Email body..."></textarea>
+                        </div>
+                        <div class="step">
+                            <div class="step-header">
+                                <span class="step-num">Step 3 (Final)</span>
+                            </div>
+                            <input type="text" name="subjects[]" placeholder="Subject line">
+                            <textarea name="bodies[]" placeholder="Email body..."></textarea>
+                        </div>
+                    </div>
+
+                    <button type="button" onclick="addStep()" class="btn btn-secondary" style="margin-top: 10px;">+ Add Step</button>
+
+                    <label for="delays">Delay Between Steps (days, comma-separated)</label>
+                    <input type="text" name="delays" id="delays" value="0,3,7" placeholder="0,3,7,14">
+
+                    <button type="submit" class="btn" style="margin-top: 15px;">Create Sequence</button>
+                </form>
+            </div>
+        </div>
+
+        <div id="tab-start" class="tab-content">
+            <div class="card">
+                <h2>Start Sequence</h2>
+                <form method="POST">
+                    <input type="hidden" name="action" value="start">
+
+                    <label for="sequence_name">Sequence</label>
+                    <select name="sequence_name" id="sequence_name">
+                        {% for seq in sequences %}
+                        <option value="{{ seq.name }}">{{ seq.name }} ({{ seq.steps }} steps)</option>
+                        {% endfor %}
+                    </select>
+
+                    <label for="list_name">Lead List</label>
+                    <select name="list_name" id="list_name">
+                        {% for list in lead_lists %}
+                        <option value="{{ list.name }}">{{ list.name }} ({{ list.count }} leads)</option>
+                        {% endfor %}
+                    </select>
+
+                    <button type="submit" class="btn" style="margin-top: 15px;">Start Sequence</button>
+                </form>
+            </div>
+        </div>
+
+        <div id="tab-list" class="tab-content">
+            <div class="card">
+                <h2>Saved Sequences</h2>
+                {% if sequences %}
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Steps</th>
+                            <th>Status</th>
+                            <th>Leads</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for seq in sequences %}
+                        <tr>
+                            <td>{{ seq.name }}</td>
+                            <td>{{ seq.steps }}</td>
+                            <td>{{ seq.status }}</td>
+                            <td>{{ seq.leads }}</td>
+                            <td><a href="/sequences/{{ seq.name }}" class="btn btn-secondary" style="padding: 5px 15px;">View</a></td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                {% else %}
+                <p style="color: #888;">No sequences yet.</p>
+                {% endif %}
+            </div>
+        </div>
+
+        <a href="/" class="btn btn-secondary">← Dashboard</a>
+    </div>
+
+    <script>
+        function switchTab(tab) {
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+            event.target.classList.add('active');
+            document.getElementById('tab-' + tab).classList.add('active');
+        }
+
+        let stepCount = 3;
+        function addStep() {
+            stepCount++;
+            const stepsDiv = document.getElementById('steps');
+            const step = document.createElement('div');
+            step.className = 'step';
+            step.innerHTML = `
+                <div class="step-header">
+                    <span class="step-num">Step ${stepCount}</span>
+                </div>
+                <input type="text" name="subjects[]" placeholder="Subject line">
+                <textarea name="bodies[]" placeholder="Email body..."></textarea>
+            `;
+            stepsDiv.appendChild(step);
+        }
+    </script>
+</body>
+</html>

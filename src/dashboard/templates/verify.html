@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Email Verification — Cold Email Engine</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #0a0a0a; color: #e0e0e0; }
+        .container { max-width: 1000px; margin: 0 auto; padding: 20px; }
+        h1 { color: #00ff88; margin-bottom: 30px; }
+        .card { background: #1a1a1a; border: 1px solid #333; border-radius: 8px; padding: 20px; margin-bottom: 20px; }
+        .btn { display: inline-block; padding: 10px 20px; background: #00ff88; color: #000; text-decoration: none; border-radius: 5px; font-weight: bold; border: none; cursor: pointer; font-size: 14px; }
+        .btn:hover { background: #00cc6a; }
+        .btn-secondary { background: #333; color: #fff; }
+        label { display: block; color: #888; margin-bottom: 5px; margin-top: 15px; }
+        textarea { width: 100%; padding: 10px; background: #0a0a0a; border: 1px solid #333; border-radius: 5px; color: #fff; font-size: 14px; min-height: 150px; }
+        .result { margin: 10px 0; padding: 10px; border-radius: 5px; }
+        .result-valid { background: #00ff8833; border: 1px solid #00ff88; }
+        .result-invalid { background: #ff444433; border: 1px solid #ff4444; }
+        .score { font-size: 1.5em; font-weight: bold; }
+        .checks { color: #888; font-size: 12px; margin-top: 5px; }
+        table { width: 100%; border-collapse: collapse; }
+        th, td { padding: 10px; text-align: left; border-bottom: 1px solid #333; }
+        th { color: #888; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📧 Email Verification</h1>
+
+        <div class="card">
+            <form method="POST">
+                <label for="emails">Email Addresses (one per line)</label>
+                <textarea name="emails" id="emails" placeholder="john@example.com&#10;jane@company.com&#10;test@invalid12345.com"></textarea>
+
+                <button type="submit" class="btn" style="margin-top: 15px;">Verify Emails</button>
+            </form>
+        </div>
+
+        {% if results %}
+        <div class="card">
+            <h2>Results</h2>
+
+            <div style="margin: 15px 0;">
+                <span style="color: #00ff88; font-size: 1.2em;">✅ Valid: {{ results|selectattr('valid')|list|length }}</span>
+                <span style="color: #ff4444; font-size: 1.2em; margin-left: 20px;">❌ Invalid: {{ results|rejectattr('valid')|list|length }}</span>
+            </div>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Email</th>
+                        <th>Status</th>
+                        <th>Score</th>
+                        <th>Reason</th>
+                        <th>Checks</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for r in results %}
+                    <tr>
+                        <td>{{ r.email }}</td>
+                        <td>
+                            {% if r.valid %}
+                            <span style="color: #00ff88;">✅ Valid</span>
+                            {% else %}
+                            <span style="color: #ff4444;">❌ Invalid</span>
+                            {% endif %}
+                        </td>
+                        <td class="score" style="color: {{ '#00ff88' if r.score >= 70 else '#ffaa00' if r.score >= 50 else '#ff4444' }}">{{ r.score }}</td>
+                        <td>{{ r.reason }}</td>
+                        <td>
+                            <div class="checks">
+                                {% for check, data in r.checks.items() %}
+                                <span style="margin-right: 8px;">{{ check }}: {{ '✓' if data.valid|default(data.is_disposable|default(not data.is_role|default(true))) else '✗' }}</span>
+                                {% endfor %}
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% endif %}
+
+        <a href="/" class="btn btn-secondary">← Dashboard</a>
+    </div>
+</body>
+</html>

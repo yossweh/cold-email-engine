@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lead Management — Cold Email Engine</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #0a0a0a; color: #e0e0e0; }
+        .container { max-width: 1000px; margin: 0 auto; padding: 20px; }
+        h1 { color: #00ff88; margin-bottom: 30px; }
+        h2 { color: #fff; margin: 20px 0 10px; }
+        .card { background: #1a1a1a; border: 1px solid #333; border-radius: 8px; padding: 20px; margin-bottom: 20px; }
+        .btn { display: inline-block; padding: 10px 20px; background: #00ff88; color: #000; text-decoration: none; border-radius: 5px; font-weight: bold; border: none; cursor: pointer; font-size: 14px; }
+        .btn:hover { background: #00cc6a; }
+        .btn-secondary { background: #333; color: #fff; }
+        .btn-danger { background: #ff4444; color: #fff; }
+        label { display: block; color: #888; margin-bottom: 5px; margin-top: 15px; }
+        input, textarea, select { width: 100%; padding: 10px; background: #0a0a0a; border: 1px solid #333; border-radius: 5px; color: #fff; font-size: 14px; }
+        textarea { min-height: 120px; resize: vertical; }
+        .tabs { display: flex; gap: 10px; margin-bottom: 20px; }
+        .tab { padding: 10px 20px; background: #222; border: 1px solid #333; border-radius: 5px; cursor: pointer; color: #888; }
+        .tab.active { background: #00ff8833; border-color: #00ff88; color: #00ff88; }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        table { width: 100%; border-collapse: collapse; }
+        th, td { padding: 10px; text-align: left; border-bottom: 1px solid #333; }
+        th { color: #888; }
+        .flash { padding: 10px; border-radius: 5px; margin-bottom: 15px; }
+        .flash-success { background: #00ff8833; border: 1px solid #00ff88; color: #00ff88; }
+        .flash-error { background: #ff444433; border: 1px solid #ff4444; color: #ff4444; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📋 Lead Management</h1>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+        {% for category, message in messages %}
+        <div class="flash flash-{{ category }}">{{ message }}</div>
+        {% endfor %}
+        {% endif %}
+        {% endwith %}
+
+        <div class="tabs">
+            <div class="tab active" onclick="switchTab('csv')">📁 CSV Import</div>
+            <div class="tab" onclick="switchTab('manual')">✏️ Manual Entry</div>
+            <div class="tab" onclick="switchTab('lists')">📊 Saved Lists</div>
+        </div>
+
+        <div id="tab-csv" class="tab-content active">
+            <div class="card">
+                <h2>Import from CSV</h2>
+                <form method="POST" enctype="multipart/form-data">
+                    <input type="hidden" name="action" value="import_csv">
+
+                    <label for="file">CSV File</label>
+                    <input type="file" name="file" id="file" accept=".csv" style="padding: 10px;">
+
+                    <label for="list_name">List Name (optional)</label>
+                    <input type="text" name="list_name" id="list_name" placeholder="my-leads">
+
+                    <button type="submit" class="btn" style="margin-top: 15px;">Import</button>
+                </form>
+
+                <div style="margin-top: 20px; color: #888;">
+                    <p><strong>Supported columns:</strong></p>
+                    <p>email, name, company, website, title, phone, linkedin, notes</p>
+                    <p style="margin-top: 10px;">Column names are case-insensitive. The engine auto-detects email columns.</p>
+                </div>
+            </div>
+        </div>
+
+        <div id="tab-manual" class="tab-content">
+            <div class="card">
+                <h2>Manual Entry</h2>
+                <form method="POST">
+                    <input type="hidden" name="action" value="import_manual">
+
+                    <label for="entries">Leads (one per line)</label>
+                    <textarea name="entries" id="entries" placeholder="john@company.com&#10;jane@example.com&#10;https://company.com"></textarea>
+
+                    <label for="list_name_manual">List Name</label>
+                    <input type="text" name="list_name" id="list_name_manual" placeholder="manual-leads">
+
+                    <button type="submit" class="btn" style="margin-top: 15px;">Add Leads</button>
+                </form>
+            </div>
+        </div>
+
+        <div id="tab-lists" class="tab-content">
+            <div class="card">
+                <h2>Saved Lead Lists</h2>
+                {% if lead_lists %}
+                <table>
+                    <thead>
+                        <tr>
+                            <th>List Name</th>
+                            <th>Leads</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for list in lead_lists %}
+                        <tr>
+                            <td>{{ list.name }}</td>
+                            <td>{{ list.count }}</td>
+                            <td>
+                                <a href="/leads/{{ list.name }}" class="btn btn-secondary" style="padding: 5px 15px;">View</a>
+                                <form method="POST" style="display: inline;">
+                                    <input type="hidden" name="action" value="deduplicate">
+                                    <input type="hidden" name="list_name" value="{{ list.name }}">
+                                    <button type="submit" class="btn btn-secondary" style="padding: 5px 15px;">Dedup</button>
+                                </form>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                {% else %}
+                <p style="color: #888;">No saved lists yet.</p>
+                {% endif %}
+            </div>
+        </div>
+
+        <a href="/" class="btn btn-secondary">← Dashboard</a>
+    </div>
+
+    <script>
+        function switchTab(tab) {
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+            event.target.classList.add('active');
+            document.getElementById('tab-' + tab).classList.add('active');
+        }
+    </script>
+</body>
+</html>
