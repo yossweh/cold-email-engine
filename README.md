@@ -1,6 +1,6 @@
-# 🖤 Obsidian — AI Cold Email Engine
+# 🖤 0xChapo — AI Cold Email Engine
 
-**By Obsidian Labs**
+**By 0xChapo Labs**
 
 AI-powered cold email automation — scrape leads, generate personalized emails with Claude, send via SMTP, auto follow-ups.
 
@@ -36,7 +36,7 @@ python src/dashboard/app.py
 ## Architecture
 
 ```
-obsidian/
+0xchapo/
 ├── src/
 │   ├── auth/            # User authentication
 │   ├── payments/        # LemonSqueezy + Midtrans
@@ -95,4 +95,4 @@ Customer bayar → Webhook → Auto-activate → Langsung Pro
 
 ## License
 
-MIT — Obsidian Labs
+MIT — 0xChapo Labs
