@@ -1,0 +1,30 @@
+[
+  {
+    "error": "Error code: 401 - {'type': 'error', 'error': {'type': 'authentication_error', 'message': 'invalid x-api-key'}, 'request_id': 'req_011CbghZGrvTbJwVpAAyMaFU'}",
+    "lead": {
+      "url": "https://github.com",
+      "domain": "github.com",
+      "title": "GitHub \u00b7 Change is constant. GitHub keeps you ahead. \u00b7 GitHub",
+      "description": "Join the world's most widely adopted, AI-powered developer platform where millions of developers, businesses, and the largest open source community build software that advances humanity.",
+      "keywords": [],
+      "about": "Skip to contentNavigation MenuToggle navigationSign inPlatformAI CODE CREATIONGitHub CopilotWrite better code with AIGitHub Copilot appDirect agents from issue to mergeMCP RegistryNewIntegrate external toolsDEVELOPER WORKFLOWSActionsAutomate any workflowCodespacesInstant dev environmentsIssuesPlan and track workCode ReviewManage code changesAPPLICATION SECURITYGitHub Advanced SecurityFind and fix vulnerabilitiesCode securitySecure your code as you buildSecret protectionStop leaks before they sta",
+      "contact_email": "",
+      "social_links": {
+        "github": "https://github.com/github",
+        "linkedin": "https://www.linkedin.com/company/github",
+        "twitter": "https://x.com/github"
+      },
+      "tech_stack": [
+        "React"
+      ],
+      "headings": [
+        "Navigation Menu",
+        "Search code, repositories, users, issues, pull requests...",
+        "Provide feedback",
+        "Saved searches",
+        "Use saved searches to filter your results more quickly"
+      ],
+      "email": ""
+    }
+  }
+]

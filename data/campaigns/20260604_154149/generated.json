@@ -1,0 +1,13 @@
+[
+  {
+    "subject": "Quick question about Gmail's growth",
+    "body": "Hi there,\n\nI've been following Gmail and think there's a great fit here.\n\nWe help companies like Gmail Subject: Quick question about {{company_name}}'s growth\r\n\r\nHi {{first_name}},\r\n\r\nI noticed {{company_name}} has been scaling fast \u2014 congrats on the recent growth.\r\n\r\nWe've been helping similar companies in {{industry}} reduce {{pain_point}} by up to 40% without adding headcount.\r\n\r\nWould it make sense to hop on a quick 15-min call to see if we could do the same for {{company_name}}?\r\n\r\nBest,\r\n{{sender_name}}\r\n{{sender_company}}.\n\nWould you be open to a quick 15-minute call this week to discuss how we could help?\n\nBest regards,\n\n",
+    "personalization_note": "Template-based using Gmail info",
+    "confidence": 0.7,
+    "method": "template",
+    "lead": {
+      "email": "achmadyosifa@gmail.com",
+      "title": "Gmail"
+    }
+  }
+]

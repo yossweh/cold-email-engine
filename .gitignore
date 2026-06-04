@@ -1,12 +1,13 @@
-venv/
-__pycache__/
-*.pyc
-.env
-data/campaigns/
-*.egg-info/
-dist/
-build/
-src/data/
-check_smtp.py
-test_email.py
-test_gmail.py
+     1|venv/
+     2|__pycache__/
+     3|*.pyc
+     4|.env
+     5|data/
+     6|*.egg-info/
+     7|dist/
+     8|build/
+     9|src/data/
+    10|check_smtp.py
+    11|test_email.py
+    12|test_gmail.py
+    13|

@@ -1,0 +1,18 @@
+[
+  {
+    "subject": "Quick question about Example Domain's growth",
+    "body": "Hi there,\n\nI came across Example Domain and was impressed by what you're building.\n\nWe help companies like Example Domain AI cold email automation.\n\nWould you be open to a quick 15-minute call this week to discuss how we could help?\n\nBest regards,\nEl Chapo\n0xChapo",
+    "personalization_note": "Template-based using Example Domain info",
+    "confidence": 0.7,
+    "method": "template",
+    "lead": {
+      "email": "test@example.com",
+      "title": "Example Domain",
+      "url": "https://example.com",
+      "domain": "example.com",
+      "headings": [
+        "Example Domain"
+      ]
+    }
+  }
+]

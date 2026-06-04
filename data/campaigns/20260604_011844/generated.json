@@ -1,0 +1,26 @@
+[
+  {
+    "error": "Error code: 401 - {'type': 'error', 'error': {'type': 'authentication_error', 'message': 'invalid x-api-key'}, 'request_id': 'req_011Cbgi2UmYFB7pDv4V4gG8V'}",
+    "lead": {
+      "url": "cilokcilok15@gmail.com",
+      "error": "Invalid URL 'cilokcilok15@gmail.com': No scheme supplied. Perhaps you meant https://cilokcilok15@gmail.com?",
+      "email": ""
+    }
+  },
+  {
+    "error": "Error code: 401 - {'type': 'error', 'error': {'type': 'authentication_error', 'message': 'invalid x-api-key'}, 'request_id': 'req_011Cbgi2W7tyEGKpBVRqRBH9'}",
+    "lead": {
+      "url": "achmadyosifa@gmail.com",
+      "error": "Invalid URL 'achmadyosifa@gmail.com': No scheme supplied. Perhaps you meant https://achmadyosifa@gmail.com?",
+      "email": ""
+    }
+  },
+  {
+    "error": "Error code: 401 - {'type': 'error', 'error': {'type': 'authentication_error', 'message': 'invalid x-api-key'}, 'request_id': 'req_011Cbgi2XTWh4Ek7M35ohsf6'}",
+    "lead": {
+      "url": "achmadyosifa9@gmail.com",
+      "error": "Invalid URL 'achmadyosifa9@gmail.com': No scheme supplied. Perhaps you meant https://achmadyosifa9@gmail.com?",
+      "email": ""
+    }
+  }
+]

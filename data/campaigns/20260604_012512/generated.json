@@ -1,0 +1,10 @@
+[
+  {
+    "error": "Error code: 401 - {'type': 'error', 'error': {'type': 'authentication_error', 'message': 'invalid x-api-key'}, 'request_id': 'req_011CbgiX6mGNWx744YdzR48X'}",
+    "lead": {
+      "url": "test@example.com",
+      "error": "Invalid URL 'test@example.com': No scheme supplied. Perhaps you meant https://test@example.com?",
+      "email": ""
+    }
+  }
+]

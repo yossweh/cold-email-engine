@@ -1,0 +1,32 @@
+[
+  {
+    "type": "campaign",
+    "description": "Campaign run (LIVE)",
+    "detail": "1 emails processed",
+    "timestamp": "2026-06-04T16:43:09.499840"
+  },
+  {
+    "type": "campaign",
+    "description": "Campaign run (LIVE)",
+    "detail": "1 emails processed",
+    "timestamp": "2026-06-04T16:38:02.643143"
+  },
+  {
+    "type": "campaign",
+    "description": "Campaign run (LIVE)",
+    "detail": "0 emails processed",
+    "timestamp": "2026-06-04T16:07:37.395223"
+  },
+  {
+    "type": "campaign",
+    "description": "Campaign run (DRY RUN)",
+    "detail": "1 emails processed",
+    "timestamp": "2026-06-04T15:54:42.009353"
+  },
+  {
+    "type": "campaign",
+    "description": "Campaign run (LIVE)",
+    "detail": "0 emails processed",
+    "timestamp": "2026-06-04T15:54:14.420310"
+  }
+]

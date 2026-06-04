@@ -1,0 +1,42 @@
+[
+  {
+    "error": "Error code: 401 - {'type': 'error', 'error': {'type': 'authentication_error', 'message': 'invalid x-api-key'}, 'request_id': 'req_011CbghmggE4U2x1ahiekFt4'}",
+    "lead": {
+      "url": "https://company1.com",
+      "error": "HTTPSConnectionPool(host='company1.com', port=443): Max retries exceeded with url: / (Caused by SSLError(SSLEOFError(8, '[SSL: UNEXPECTED_EOF_WHILE_READING] EOF occurred in violation of protocol (_ssl.c:1016)')))",
+      "email": ""
+    }
+  },
+  {
+    "error": "Error code: 401 - {'type': 'error', 'error': {'type': 'authentication_error', 'message': 'invalid x-api-key'}, 'request_id': 'req_011CbghmhzMdhQuBdqKYDbqG'}",
+    "lead": {
+      "url": "https://company2.com",
+      "domain": "company2.com",
+      "title": "",
+      "description": "",
+      "keywords": [],
+      "about": "",
+      "contact_email": "",
+      "social_links": {},
+      "tech_stack": [],
+      "headings": [],
+      "email": ""
+    }
+  },
+  {
+    "error": "Error code: 401 - {'type': 'error', 'error': {'type': 'authentication_error', 'message': 'invalid x-api-key'}, 'request_id': 'req_011Cbghmjcb6xWNTZP6z2P17'}",
+    "lead": {
+      "url": "john@company3.com",
+      "error": "Invalid URL 'john@company3.com': No scheme supplied. Perhaps you meant https://john@company3.com?",
+      "email": ""
+    }
+  },
+  {
+    "error": "Error code: 401 - {'type': 'error', 'error': {'type': 'authentication_error', 'message': 'invalid x-api-key'}, 'request_id': 'req_011CbghmkxT7ytjF5gnXb95x'}",
+    "lead": {
+      "url": "jane@startup.io",
+      "error": "Invalid URL 'jane@startup.io': No scheme supplied. Perhaps you meant https://jane@startup.io?",
+      "email": ""
+    }
+  }
+]
