@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Start Free Trial — 0xChapo</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <style>
+        body { display: flex; align-items: center; justify-content: center; }
+        .trial-container { width: 100%; max-width: 500px; padding: 20px; text-align: center; }
+        .trial-header { margin-bottom: 40px; }
+        .trial-header h1 { font-size: 2.5em; letter-spacing: 3px; margin-bottom: 10px; color: #e0e0e0; }
+        .trial-box { background: #111118; border: 1px solid #1a1a2e; border-radius: 16px; padding: 40px 30px; margin-bottom: 30px; }
+        .trial-badge { display: inline-block; padding: 6px 16px; background: linear-gradient(135deg, #1a2a1a, #2a4a2a); border: 1px solid #3a5a3a; border-radius: 20px; font-size: 12px; font-weight: bold; color: #4ade80; letter-spacing: 1px; margin-bottom: 20px; }
+        .trial-title { font-size: 1.8em; margin-bottom: 10px; color: #e0e0e0; }
+        .trial-subtitle { color: #888; font-size: 14px; margin-bottom: 30px; line-height: 1.6; }
+        .features { text-align: left; margin: 30px 0; }
+        .features li { padding: 10px 0; border-bottom: 1px solid #1a1a1a; color: #999; list-style: none; }
+        .features li::before { content: "✓ "; color: #4ade80; font-weight: bold; }
+        .trial-note { color: #555; font-size: 12px; margin-top: 20px; line-height: 1.6; }
+        .btn-skip { display: block; width: 100%; padding: 14px; margin-top: 15px; }
+    </style>
+</head>
+<body>
+    <div class="trial-container">
+        <div class="trial-header">
+            <a href="/" style="text-decoration: none;">
+                <h1>◆ 0XCHAPO</h1>
+            </a>
+        </div>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+        {% for category, message in messages %}
+        <div class="flash flash-{{ category }}">{{ message }}</div>
+        {% endfor %}
+        {% endif %}
+        {% endwith %}
+
+        <div class="trial-box">
+            <div class="trial-badge">7-DAY FREE TRIAL</div>
+            <h2 class="trial-title">Start Your Free Trial</h2>
+            <p class="trial-subtitle">
+                Get full access to all Pro features for 7 days.<br>
+                No charge until trial ends. Cancel anytime.
+            </p>
+
+            <ul class="features">
+                <li>500 emails per day</li>
+                <li>AI-powered email generation</li>
+                <li>Lead scraping & enrichment</li>
+                <li>Email verification</li>
+                <li>Follow-up sequences</li>
+                <li>API access</li>
+            </ul>
+
+            {% if lemonsqueezy_ready %}
+            <a href="{{ checkout_url }}" class="btn btn-block" target="_blank">
+                🔒 Start Free Trial — Card Required
+            </a>
+            <p class="trial-note">
+                We'll ask for your card to prevent abuse.<br>
+                You won't be charged for 7 days.
+            </p>
+            {% else %}
+            <form method="POST" action="/activate-trial">
+                <button type="submit" class="btn btn-block">
+                    🚀 Start Free Trial — No Card Required
+                </button>
+            </form>
+            <p class="trial-note">
+                7 days of full Pro access. No card needed.<br>
+                Upgrade to paid plan anytime.
+            </p>
+            {% endif %}
+        </div>
+
+        <a href="/dashboard" class="btn btn-secondary btn-block btn-skip">Skip for now — Continue with Free plan</a>
+    </div>
+</body>
+</html>

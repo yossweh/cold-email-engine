@@ -1,0 +1,27 @@
+{
+  "email": "xee87804@gmail.com",
+  "name": "gygy",
+  "password_hash": "132715310f12bc903bdc2e5255b8d0cdad447d26eb40b788020a020629b1b9d5",
+  "salt": "2b4899edf114ab185a6564d724ec24c6",
+  "created": "2026-06-04T12:50:46.878665",
+  "plan": "free",
+  "plan_expires": null,
+  "trial_expires": "2026-06-11T12:50:46.878683",
+  "license_key": null,
+  "usage": {
+    "emails_sent": 0,
+    "emails_limit": 10,
+    "last_reset": "2026-06-04T12:50:46.878694"
+  },
+  "settings": {
+    "smtp_host": "",
+    "smtp_port": 587,
+    "smtp_user": "",
+    "smtp_password": "",
+    "from_name": "gygy",
+    "from_email": "xee87804@gmail.com",
+    "anthropic_api_key": ""
+  },
+  "onboarding_completed": true,
+  "onboarding_completed_at": "2026-06-04T15:31:41.677503"
+}

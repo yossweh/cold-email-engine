@@ -3,88 +3,153 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Email Verification — Cold Email Engine</title>
+    <title>Email Verification — 0xChapo</title>
+    <link rel="stylesheet" href="/static/style.css">
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #0a0a0a; color: #e0e0e0; }
-        .container { max-width: 1000px; margin: 0 auto; padding: 20px; }
-        h1 { color: #00ff88; margin-bottom: 30px; }
-        .card { background: #1a1a1a; border: 1px solid #333; border-radius: 8px; padding: 20px; margin-bottom: 20px; }
-        .btn { display: inline-block; padding: 10px 20px; background: #00ff88; color: #000; text-decoration: none; border-radius: 5px; font-weight: bold; border: none; cursor: pointer; font-size: 14px; }
-        .btn:hover { background: #00cc6a; }
-        .btn-secondary { background: #333; color: #fff; }
-        label { display: block; color: #888; margin-bottom: 5px; margin-top: 15px; }
-        textarea { width: 100%; padding: 10px; background: #0a0a0a; border: 1px solid #333; border-radius: 5px; color: #fff; font-size: 14px; min-height: 150px; }
-        .result { margin: 10px 0; padding: 10px; border-radius: 5px; }
-        .result-valid { background: #00ff8833; border: 1px solid #00ff88; }
-        .result-invalid { background: #ff444433; border: 1px solid #ff4444; }
-        .score { font-size: 1.5em; font-weight: bold; }
-        .checks { color: #888; font-size: 12px; margin-top: 5px; }
-        table { width: 100%; border-collapse: collapse; }
-        th, td { padding: 10px; text-align: left; border-bottom: 1px solid #333; }
-        th { color: #888; }
+        /* Verify-specific styles */
+        .verify-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin-bottom: 25px; }
+        .verify-stat { background: #111118; border: 1px solid #1a1a1e; border-radius: 12px; padding: 20px; text-align: center; transition: border-color 0.2s; }
+        .verify-stat:hover { border-color: #2a2a3e; }
+        .verify-stat-number { font-size: 2.2em; font-weight: 700; }
+        .verify-stat-label { color: #555; font-size: 12px; text-transform: uppercase; letter-spacing: 1px; margin-top: 5px; }
+        .result-row { display: flex; align-items: center; gap: 12px; padding: 14px 15px; border-bottom: 1px solid #1a1a1a; transition: background 0.2s; }
+        .result-row:hover { background: #111118; }
+        .result-row:last-child { border-bottom: none; }
+        .result-email { flex: 1; font-size: 14px; color: #e0e0e0; font-family: 'Courier New', monospace; }
+        .result-status { width: 80px; text-align: center; }
+        .result-score { width: 60px; text-align: center; font-weight: 700; font-size: 16px; }
+        .result-reason { flex: 1; color: #666; font-size: 13px; }
+        .result-checks { display: flex; gap: 8px; flex-wrap: wrap; }
+        .check-badge { padding: 2px 8px; border-radius: 6px; font-size: 11px; background: #1a1a1a; border: 1px solid #2a2a2a; }
+        .check-pass { color: #00ff88; border-color: #00ff8840; }
+        .check-fail { color: #ff6666; border-color: #ff444440; }
+        .results-header { display: flex; gap: 15px; padding: 12px 15px; border-bottom: 2px solid #1a1a1a; }
+        .results-header span { color: #555; font-size: 11px; text-transform: uppercase; letter-spacing: 1px; font-weight: 600; }
+        @media (max-width: 768px) {
+            .verify-stats { grid-template-columns: 1fr; }
+            .result-row { flex-wrap: wrap; gap: 8px; }
+            .result-reason { flex-basis: 100%; }
+            .result-checks { flex-basis: 100%; }
+        }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>📧 Email Verification</h1>
+        <nav class="nav">
+            <a href="/dashboard" class="nav-brand">
+                <div class="nav-icon">◆</div>
+                <span class="nav-title">0XCHAPO</span>
+            </a>
+            <div class="nav-links">
+                <a href="/dashboard">Dashboard</a>
+                <a href="/campaign/new">Campaigns</a>
+                <a href="/scrape">Scrape</a>
+                <a href="/leads">Leads</a>
+                <a href="/verify" class="active">Verify</a>
+                <a href="/sequences">Sequences</a>
+                <a href="/templates">Templates</a>
+                <a href="/analytics">Analytics</a>
+                <a href="/activity">Activity</a>
+                <a href="/pricing">Pricing</a>
+                <a href="/profile">Profile</a>
+            </div>
+            <div class="nav-user">
+                <span class="nav-plan plan-{{ user.plan }}">{{ user.plan|upper }}</span>
+                <a href="/logout" style="color: #666; font-size: 13px;">Logout</a>
+            </div>
+        </nav>
 
-        <div class="card">
-            <form method="POST">
-                <label for="emails">Email Addresses (one per line)</label>
-                <textarea name="emails" id="emails" placeholder="john@example.com&#10;jane@company.com&#10;test@invalid12345.com"></textarea>
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+        {% for category, message in messages %}
+        <div class="flash flash-{{ category }}">{{ message }}</div>
+        {% endfor %}
+        {% endif %}
+        {% endwith %}
 
-                <button type="submit" class="btn" style="margin-top: 15px;">Verify Emails</button>
+        <div class="card-flat">
+            <div class="section-title">📧 Email Verification</div>
+            <form method="POST" style="margin-top: 20px;">
+                <div class="form-group">
+                    <label for="emails">Email Addresses (one per line)</label>
+                    <textarea name="emails" id="emails" placeholder="john@example.com&#10;jane@company.com&#10;test@invalid12345.com" style="font-family: 'Courier New', monospace;"></textarea>
+                    <div class="form-help">Verify email addresses for validity, disposable providers, role accounts, and more.</div>
+                </div>
+                <button type="submit" class="btn" style="margin-top: 10px;">Verify Emails</button>
             </form>
         </div>
 
         {% if results %}
-        <div class="card">
-            <h2>Results</h2>
+        <!-- Summary Stats -->
+        <div class="verify-stats">
+            <div class="verify-stat">
+                <div class="verify-stat-number">{{ results|length }}</div>
+                <div class="verify-stat-label">Total Checked</div>
+            </div>
+            <div class="verify-stat">
+                <div class="verify-stat-number" style="color: #00ff88;">{{ results|selectattr('valid')|list|length }}</div>
+                <div class="verify-stat-label">Valid</div>
+            </div>
+            <div class="verify-stat">
+                <div class="verify-stat-number" style="color: #ff6666;">{{ results|rejectattr('valid')|list|length }}</div>
+                <div class="verify-stat-label">Invalid</div>
+            </div>
+        </div>
 
-            <div style="margin: 15px 0;">
-                <span style="color: #00ff88; font-size: 1.2em;">✅ Valid: {{ results|selectattr('valid')|list|length }}</span>
-                <span style="color: #ff4444; font-size: 1.2em; margin-left: 20px;">❌ Invalid: {{ results|rejectattr('valid')|list|length }}</span>
+        <!-- Results Table -->
+        <div class="card-flat">
+            <div class="section-title">Verification Results</div>
+
+            <div class="results-header" style="margin-top: 15px;">
+                <span style="flex: 1;">Email</span>
+                <span style="width: 80px; text-align: center;">Status</span>
+                <span style="width: 60px; text-align: center;">Score</span>
+                <span style="flex: 1;">Reason</span>
+                <span style="min-width: 200px;">Checks</span>
             </div>
 
-            <table>
-                <thead>
-                    <tr>
-                        <th>Email</th>
-                        <th>Status</th>
-                        <th>Score</th>
-                        <th>Reason</th>
-                        <th>Checks</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for r in results %}
-                    <tr>
-                        <td>{{ r.email }}</td>
-                        <td>
-                            {% if r.valid %}
-                            <span style="color: #00ff88;">✅ Valid</span>
-                            {% else %}
-                            <span style="color: #ff4444;">❌ Invalid</span>
-                            {% endif %}
-                        </td>
-                        <td class="score" style="color: {{ '#00ff88' if r.score >= 70 else '#ffaa00' if r.score >= 50 else '#ff4444' }}">{{ r.score }}</td>
-                        <td>{{ r.reason }}</td>
-                        <td>
-                            <div class="checks">
-                                {% for check, data in r.checks.items() %}
-                                <span style="margin-right: 8px;">{{ check }}: {{ '✓' if data.valid|default(data.is_disposable|default(not data.is_role|default(true))) else '✗' }}</span>
-                                {% endfor %}
-                            </div>
-                        </td>
-                    </tr>
+            {% for r in results %}
+            <div class="result-row">
+                <div class="result-email">{{ r.email }}</div>
+                <div class="result-status">
+                    {% if r.valid %}
+                    <span class="badge badge-green">Valid</span>
+                    {% else %}
+                    <span class="badge badge-red">Invalid</span>
+                    {% endif %}
+                </div>
+                <div class="result-score" style="color: {{ '#00ff88' if r.score >= 70 else '#ffaa00' if r.score >= 50 else '#ff6666' }}">{{ r.score }}</div>
+                <div class="result-reason">{{ r.reason or '—' }}</div>
+                <div class="result-checks">
+                    {% for check, data in r.checks.items() %}
+                    {% set check_valid = data.valid|default(data.is_disposable|default(not data.is_role|default(true))) %}
+                    <span class="check-badge {{ 'check-pass' if check_valid else 'check-fail' }}">{{ check }}: {{ '✓' if check_valid else '✗' }}</span>
                     {% endfor %}
-                </tbody>
-            </table>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        {% if results|selectattr('valid')|list|length > 0 %}
+        <div style="margin-top: 20px; display: flex; gap: 10px; justify-content: center;">
+            <form method="POST" action="/leads" style="display: inline;">
+                <input type="hidden" name="action" value="import_manual">
+                <input type="hidden" name="entries" value="{% for r in results if r.valid %}{{ r.email }}
+{% endfor %}">
+                <input type="hidden" name="list_name" value="verified-emails">
+                <button type="submit" class="btn btn-primary">💾 Save Valid Emails to Leads</button>
+            </form>
         </div>
         {% endif %}
+        {% endif %}
 
-        <a href="/" class="btn btn-secondary">← Dashboard</a>
+        {% if not results %}
+        <div class="empty">
+            <div class="empty-icon">✅</div>
+            <div class="empty-title">Verify email addresses</div>
+            <div class="empty-desc">Check deliverability, detect disposable emails, and validate domains</div>
+        </div>
+        {% endif %}
     </div>
 </body>
 </html>

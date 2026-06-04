@@ -46,6 +46,7 @@ class UserManager:
             'created': datetime.now().isoformat(),
             'plan': 'free',
             'plan_expires': None,
+            'trial_expires': None,  # Trial starts after card is added
             'license_key': None,
             'usage': {
                 'emails_sent': 0,
@@ -102,6 +103,39 @@ class UserManager:
                 'plan': user['plan'],
             }
         }
+
+    def create_session(self, email: str) -> Optional[str]:
+        """Create session for user (used by OAuth)"""
+        user = self.get_user(email)
+        if not user:
+            return None
+        
+        session_token = secrets.token_hex(32)
+        session_data = {
+            'email': email,
+            'created': datetime.now().isoformat(),
+            'expires': (datetime.now() + timedelta(days=30)).isoformat(),
+        }
+        
+        session_path = self.sessions_dir / f'{session_token}.json'
+        with open(session_path, 'w') as f:
+            json.dump(session_data, f, indent=2)
+        
+        return session_token
+
+    def invalidate_all_sessions(self, email: str) -> int:
+        """Invalidate all sessions for a user. Returns count of deleted sessions."""
+        deleted = 0
+        for session_file in self.sessions_dir.glob('*.json'):
+            try:
+                with open(session_file) as f:
+                    data = json.load(f)
+                if data.get('email') == email:
+                    session_file.unlink()
+                    deleted += 1
+            except:
+                pass
+        return deleted
 
     def get_user(self, email: str) -> Optional[Dict]:
         """Get user by email."""
@@ -188,6 +222,45 @@ class UserManager:
             'can_send': remaining > 0,
         }
 
+    
+    def check_trial(self, email: str) -> Dict:
+        """Check if user's trial is still active."""
+        user = self.get_user(email)
+        if not user:
+            return {'error': 'User not found'}
+
+        plan = user.get('plan', 'free')
+
+        # Pro/Enterprise always active
+        if plan in ('pro', 'enterprise'):
+            plan_expires = user.get('plan_expires')
+            if plan_expires:
+                expires = datetime.fromisoformat(plan_expires)
+                if datetime.now() > expires:
+                    # Plan expired, downgrade to free
+                    self.update_user(email, {
+                        'plan': 'free',
+                        'trial_expires': (datetime.now() + timedelta(days=3)).isoformat()
+                    })
+                    return {'active': False, 'plan': 'free', 'reason': 'plan_expired', 'days_left': 0}
+            return {'active': True, 'plan': plan, 'days_left': -1}
+
+        # Free plan — check trial
+        trial_expires = user.get('trial_expires')
+        if not trial_expires:
+            # Old user without trial — give them 7 days
+            trial_expires = (datetime.now() + timedelta(days=7)).isoformat()
+            self.update_user(email, {'trial_expires': trial_expires})
+
+        expires = datetime.fromisoformat(trial_expires)
+        now = datetime.now()
+
+        if now > expires:
+            return {'active': False, 'plan': 'free', 'reason': 'trial_expired', 'days_left': 0}
+
+        days_left = (expires - now).days
+        return {'active': True, 'plan': 'free', 'reason': 'trial_active', 'days_left': days_left}
+
     def increment_usage(self, email: str, count: int = 1) -> Dict:
         """Increment email usage."""
         user = self.get_user(email)
@@ -220,6 +293,37 @@ def login_required(f):
         return f(*args, **kwargs)
     return decorated
 
+
+
+def trial_required(f):
+    """Decorator to require active trial or paid plan."""
+    @wraps(f)
+    def decorated(*args, **kwargs):
+        token = session.get('session_token')
+        if not token:
+            flash('Please login first', 'error')
+            return redirect(url_for('login'))
+
+        user_manager = UserManager()
+        session_data = user_manager.verify_session(token)
+        if not session_data:
+            session.clear()
+            flash('Session expired, please login again', 'error')
+            return redirect(url_for('login'))
+
+        trial = user_manager.check_trial(session_data['email'])
+        if not trial.get('active'):
+            # Check if user has never started trial
+            user = user_manager.get_user(session_data['email'])
+            if user and not user.get('trial_expires'):
+                flash('Start your free trial to continue.', 'error')
+                return redirect(url_for('start_trial'))
+            else:
+                flash('Your free trial has expired. Upgrade to Pro to continue!', 'error')
+                return redirect(url_for('pricing'))
+
+        return f(*args, **kwargs)
+    return decorated
 
 def get_current_user() -> Optional[Dict]:
     """Get current logged-in user."""

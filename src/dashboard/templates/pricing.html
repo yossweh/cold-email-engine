@@ -6,125 +6,474 @@
     <title>Pricing — 0xChapo</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #0a0a0a; color: #e0e0e0; }
-        .container { max-width: 1200px; margin: 0 auto; padding: 60px 20px; }
-        .header { text-align: center; margin-bottom: 60px; }
-        .header h1 { font-size: 3em; letter-spacing: 3px; margin-bottom: 10px; }
-        .header p { color: #666; font-size: 1.1em; }
-        .pricing { display: flex; gap: 30px; justify-content: center; flex-wrap: wrap; }
-        .plan { background: #111; border: 1px solid #2a2a2a; border-radius: 16px; padding: 40px 30px; width: 320px; text-align: center; transition: all 0.3s; position: relative; }
-        .plan:hover { transform: translateY(-5px); border-color: #4a4a6a; }
-        .plan.featured { border-color: #4a4a6a; background: #0f0f1a; }
-        .plan.featured::before { content: "POPULAR"; position: absolute; top: -12px; left: 50%; transform: translateX(-50%); background: linear-gradient(135deg, #4a4a6a, #6a6a8a); color: #fff; padding: 5px 20px; border-radius: 20px; font-size: 11px; font-weight: bold; letter-spacing: 1px; }
-        .plan-name { font-size: 1.4em; color: #888; margin-bottom: 5px; letter-spacing: 1px; }
-        .plan-price { font-size: 3.5em; color: #e0e0e0; margin: 20px 0; font-weight: 300; }
-        .plan-price span { font-size: 0.35em; color: #666; }
-        .plan-price-idr { color: #555; font-size: 0.9em; margin-top: 8px; }
-        .plan-features { list-style: none; margin: 30px 0; text-align: left; }
-        .plan-features li { padding: 10px 0; border-bottom: 1px solid #1a1a1a; color: #999; }
-        .plan-features li::before { content: "◆ "; color: #4a4a6a; font-size: 10px; }
-        .btn { display: block; padding: 14px 24px; background: linear-gradient(135deg, #2a2a3e, #3a3a5e); color: #fff; text-decoration: none; border-radius: 8px; font-weight: bold; font-size: 15px; margin-top: 15px; border: 1px solid #4a4a6a; cursor: pointer; transition: all 0.2s; }
-        .btn:hover { background: linear-gradient(135deg, #3a3a4e, #4a4a6e); border-color: #6a6a8a; }
-        .btn-secondary { background: transparent; border-color: #333; color: #888; }
-        .btn-secondary:hover { border-color: #555; color: #aaa; }
-        .btn-idr { background: linear-gradient(135deg, #3a2a1e, #5a4a3e); border-color: #6a5a4a; margin-top: 10px; }
-        .btn-idr:hover { background: linear-gradient(135deg, #4a3a2e, #6a5a4e); }
-        .current-plan { background: #1a1a1a; color: #555; cursor: default; border-color: #333; }
-        .current-plan:hover { background: #1a1a1a; border-color: #333; }
-        .payment-methods { margin-top: 15px; color: #555; font-size: 12px; line-height: 1.6; }
-        .footer-info { text-align: center; margin-top: 80px; color: #444; }
-        .footer-info p { margin: 8px 0; }
-        .guarantee { display: inline-block; padding: 8px 20px; background: #111; border: 1px solid #2a2a2a; border-radius: 20px; margin-top: 20px; font-size: 13px; color: #666; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #0a0a0a; color: #e0e0e0; min-height: 100vh; }
+        .container { max-width: 1200px; margin: 0 auto; padding: 40px 20px; }
+
+        /* Nav */
+        .nav { display: flex; justify-content: space-between; align-items: center; padding: 15px 0; border-bottom: 1px solid #1a1a1a; margin-bottom: 50px; }
+        .nav-brand { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+        .nav-icon { width: 35px; height: 35px; background: linear-gradient(135deg, #1a1a2e, #16213e); border: 1px solid #4a4a6a; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 16px; }
+        .nav-title { color: #e0e0e0; font-size: 1.2em; letter-spacing: 2px; }
+        .nav-links { display: flex; gap: 20px; }
+        .nav-links a { color: #666; text-decoration: none; font-size: 14px; transition: color 0.2s; }
+        .nav-links a:hover { color: #e0e0e0; }
+        .nav-links a.active { color: #e0e0e0; }
+
+        /* Flash */
+        .flash { padding: 12px; border-radius: 8px; margin-bottom: 20px; }
+        .flash-success { background: #00ff8820; border: 1px solid #00ff8840; color: #00ff88; }
+        .flash-error { background: #ff444420; border: 1px solid #ff444440; color: #ff6666; }
+
+        /* Header */
+        .header { text-align: center; margin-bottom: 50px; }
+        .header-badge { display: inline-block; padding: 6px 16px; background: linear-gradient(135deg, #1a2a3e, #2a3a5e); border: 1px solid #3a5a8a; border-radius: 20px; font-size: 12px; font-weight: bold; color: #6a9aee; letter-spacing: 1px; margin-bottom: 20px; }
+        .header h1 { font-size: 2.8em; font-weight: 700; margin-bottom: 15px; background: linear-gradient(135deg, #fff, #8888aa); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+        .header p { color: #666; font-size: 1.1em; max-width: 500px; margin: 0 auto; line-height: 1.6; }
+
+        /* Toggle */
+        .toggle-container { display: flex; align-items: center; justify-content: center; gap: 15px; margin-bottom: 40px; }
+        .toggle-label { font-size: 14px; color: #666; cursor: pointer; transition: color 0.2s; }
+        .toggle-label.active { color: #e0e0e0; }
+        .toggle { width: 50px; height: 26px; background: #1a1a2e; border: 1px solid #3a3a5e; border-radius: 13px; cursor: pointer; position: relative; transition: all 0.3s; }
+        .toggle::after { content: ''; position: absolute; top: 3px; left: 3px; width: 18px; height: 18px; background: #4a4a6a; border-radius: 50%; transition: all 0.3s; }
+        .toggle.yearly::after { left: 27px; background: #6a8aee; }
+        .save-badge { padding: 3px 8px; background: #00ff8820; border: 1px solid #00ff8840; border-radius: 10px; font-size: 11px; color: #00ff88; font-weight: bold; }
+
+        /* Pricing Grid */
+        .pricing { display: grid; grid-template-columns: repeat(3, 1fr); gap: 25px; align-items: start; }
+
+        /* Plan Card */
+        .plan { background: #111118; border: 1px solid #1a1a2e; border-radius: 16px; padding: 35px 30px; text-align: center; transition: all 0.3s; position: relative; overflow: hidden; }
+        .plan:hover { transform: translateY(-5px); border-color: #2a2a4e; }
+        .plan::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: linear-gradient(90deg, transparent, #2a2a4e, transparent); opacity: 0; transition: opacity 0.3s; }
+        .plan:hover::before { opacity: 1; }
+
+        .plan.featured { border-color: #3a3a6e; background: linear-gradient(180deg, #0f0f1e, #111128); }
+        .plan.featured::before { background: linear-gradient(90deg, #4a4a8e, #6a6aee, #4a4a8e); opacity: 1; }
+        .plan.featured::after { content: "MOST POPULAR"; position: absolute; top: 14px; right: -30px; background: linear-gradient(135deg, #4a6aee, #6a8aee); color: #fff; padding: 5px 40px; font-size: 10px; font-weight: bold; letter-spacing: 1px; transform: rotate(45deg); }
+
+        .plan-icon { width: 50px; height: 50px; margin: 0 auto 20px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 24px; }
+        .plan-icon.free { background: #1a1a1a; }
+        .plan-icon.pro { background: linear-gradient(135deg, #2a3a5e, #3a4a7e); }
+        .plan-icon.enterprise { background: linear-gradient(135deg, #3a2a1e, #5a4a2e); }
+
+        .plan-name { font-size: 1.1em; color: #888; margin-bottom: 5px; letter-spacing: 2px; text-transform: uppercase; font-weight: 600; }
+        .plan-desc { color: #555; font-size: 13px; margin-bottom: 20px; line-height: 1.5; }
+
+        .plan-price { margin: 25px 0; }
+        .price-amount { font-size: 3.2em; font-weight: 700; color: #fff; line-height: 1; }
+        .price-period { color: #555; font-size: 14px; margin-top: 5px; }
+        .price-idr { color: #4a4a6a; font-size: 13px; margin-top: 8px; }
+        .price-original { color: #444; font-size: 14px; text-decoration: line-through; margin-right: 8px; }
+
+        .plan-features { list-style: none; margin: 25px 0; text-align: left; }
+        .plan-features li { padding: 10px 0; border-bottom: 1px solid #1a1a1e; color: #888; font-size: 14px; display: flex; align-items: center; gap: 10px; }
+        .plan-features li:last-child { border-bottom: none; }
+        .plan-features li .check { color: #4a8aee; font-size: 14px; flex-shrink: 0; }
+        .plan-features li.highlight { color: #e0e0e0; }
+        .plan-features li.disabled { color: #333; }
+        .plan-features li.disabled .check { color: #222; }
+
+        /* Buttons */
+        .btn { display: block; width: 100%; padding: 14px 24px; background: linear-gradient(135deg, #2a2a4e, #3a3a6e); color: #fff; text-decoration: none; border-radius: 10px; font-weight: 600; font-size: 15px; border: 1px solid #4a4a6a; cursor: pointer; transition: all 0.2s; text-align: center; }
+        .btn:hover { background: linear-gradient(135deg, #3a3a5e, #4a4a7e); border-color: #6a6a8a; transform: translateY(-1px); }
+        .btn-primary { background: linear-gradient(135deg, #4a6aee, #6a8aee); border-color: #6a8aee; }
+        .btn-primary:hover { background: linear-gradient(135deg, #5a7afe, #7a9afe); border-color: #8aaafe; }
+        .btn-secondary { background: transparent; border-color: #2a2a3e; color: #888; }
+        .btn-secondary:hover { border-color: #4a4a5e; color: #aaa; }
+        .current-plan { background: #1a1a1a !important; color: #444 !important; cursor: default !important; border-color: #2a2a2a !important; }
+        .current-plan:hover { transform: none !important; background: #1a1a1a !important; }
+
+        .payment-info { margin-top: 12px; display: flex; align-items: center; justify-content: center; gap: 8px; }
+        .payment-icon { width: 32px; height: 20px; background: #1a1a1a; border: 1px solid #2a2a2a; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 9px; color: #666; font-weight: bold; }
+
+        /* Compare Table */
+        .compare-section { margin-top: 80px; }
+        .compare-section h2 { text-align: center; font-size: 1.8em; margin-bottom: 10px; font-weight: 600; }
+        .compare-section p { text-align: center; color: #666; margin-bottom: 40px; }
+        .compare-table { width: 100%; border-collapse: collapse; }
+        .compare-table th { padding: 15px; text-align: left; color: #888; font-size: 12px; text-transform: uppercase; letter-spacing: 1px; border-bottom: 2px solid #1a1a1a; }
+        .compare-table th:not(:first-child) { text-align: center; }
+        .compare-table td { padding: 14px 15px; border-bottom: 1px solid #1a1a1a; font-size: 14px; }
+        .compare-table td:not(:first-child) { text-align: center; color: #666; }
+        .compare-table tr:hover { background: #111118; }
+        .compare-table .feature-name { color: #aaa; }
+        .compare-table .check-mark { color: #4a8aee; font-size: 16px; }
+        .compare-table .cross-mark { color: #333; }
+        .compare-table .plan-col-header { font-size: 14px; font-weight: 600; color: #e0e0e0; }
+
+        /* FAQ */
+        .faq-section { margin-top: 80px; }
+        .faq-section h2 { text-align: center; font-size: 1.8em; margin-bottom: 10px; font-weight: 600; }
+        .faq-section p { text-align: center; color: #666; margin-bottom: 40px; }
+        .faq-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; }
+        .faq-item { background: #111118; border: 1px solid #1a1a1e; border-radius: 12px; padding: 25px; cursor: pointer; transition: all 0.2s; }
+        .faq-item:hover { border-color: #2a2a3e; }
+        .faq-question { display: flex; justify-content: space-between; align-items: center; font-weight: 600; font-size: 15px; color: #e0e0e0; }
+        .faq-question .arrow { color: #4a4a6a; transition: transform 0.3s; font-size: 18px; }
+        .faq-item.open .faq-question .arrow { transform: rotate(180deg); }
+        .faq-answer { color: #666; font-size: 14px; line-height: 1.6; margin-top: 15px; display: none; }
+        .faq-item.open .faq-answer { display: block; }
+
+        /* Trust */
+        .trust-section { margin-top: 60px; text-align: center; }
+        .trust-badges { display: flex; justify-content: center; gap: 40px; margin-top: 20px; flex-wrap: wrap; }
+        .trust-item { display: flex; align-items: center; gap: 10px; color: #555; font-size: 13px; }
+        .trust-icon { font-size: 20px; }
+
+        /* Footer */
+        .footer { margin-top: 60px; text-align: center; padding: 30px 0; border-top: 1px solid #1a1a1a; }
+        .footer p { color: #444; font-size: 13px; }
+
+        /* Flash */
+        .flash { padding: 12px; border-radius: 8px; margin-bottom: 20px; }
+        .flash-success { background: #00ff8820; border: 1px solid #00ff8840; color: #00ff88; }
+        .flash-error { background: #ff444420; border: 1px solid #ff444440; color: #ff6666; }
+        .flash-info { background: #4488ff20; border: 1px solid #4488ff40; color: #6699ff; }
+
+        @media (max-width: 900px) {
+            .pricing { grid-template-columns: 1fr; max-width: 400px; margin: 0 auto; }
+            .faq-grid { grid-template-columns: 1fr; }
+            .compare-table { font-size: 12px; }
+            .compare-table th, .compare-table td { padding: 10px 8px; }
+            .header h1 { font-size: 2em; }
+        }
     </style>
 </head>
 <body>
     <div class="container">
+        <!-- Nav -->
+        <nav class="nav">
+            <a href="/dashboard" class="nav-brand">
+                <div class="nav-icon">◆</div>
+                <span class="nav-title">0XCHAPO</span>
+            </a>
+            <div class="nav-links">
+                <a href="/dashboard">Dashboard</a>
+                <a href="/campaign/new">Campaign</a>
+                <a href="/scrape">Scrape</a>
+                <a href="/leads">Leads</a>
+                <a href="/pricing" class="active">Pricing</a>
+                <a href="/profile">Profile</a>
+                <a href="/logout">Logout</a>
+            </div>
+        </nav>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+        {% for category, message in messages %}
+        <div class="flash flash-{{ category }}">{{ message }}</div>
+        {% endfor %}
+        {% endif %}
+        {% endwith %}
+
+        <!-- Header -->
         <div class="header">
-            <h1>◆ 0XCHAPO</h1>
-            <p>Simple, transparent pricing</p>
+            <div class="header-badge">💎 UPGRADE YOUR OUTREACH</div>
+            <h1>Simple, transparent pricing</h1>
+            <p>Choose the plan that scales your cold email outreach. No hidden fees, cancel anytime.</p>
         </div>
 
+        <!-- Toggle -->
+        <div class="toggle-container">
+            <span class="toggle-label active" id="monthly-label">Monthly</span>
+            <div class="toggle" id="billing-toggle" onclick="toggleBilling()"></div>
+            <span class="toggle-label" id="yearly-label">Yearly</span>
+            <span class="save-badge">Save 20%</span>
+        </div>
+
+        <!-- Pricing Cards -->
         <div class="pricing">
+            <!-- Starter -->
             <div class="plan">
-                <div class="plan-name">STARTER</div>
-                <div class="plan-price">$0 <span>/mo</span></div>
-                <div class="plan-price-idr">Gratis</div>
+                <div class="plan-icon free">🚀</div>
+                <div class="plan-name">Starter</div>
+                <div class="plan-desc">Perfect for trying out cold email outreach</div>
+                <div class="plan-price">
+                    <div class="price-amount">$0</div>
+                    <div class="price-period">Free forever</div>
+                </div>
                 <ul class="plan-features">
-                    <li>10 emails per day</li>
-                    <li>AI email generation</li>
-                    <li>CSV import</li>
-                    <li>Email verification</li>
-                    <li>Community support</li>
+                    <li><span class="check">✓</span> 10 emails per day</li>
+                    <li><span class="check">✓</span> AI email generation</li>
+                    <li><span class="check">✓</span> CSV import</li>
+                    <li><span class="check">✓</span> Email verification</li>
+                    <li><span class="check">✓</span> Basic analytics</li>
+                    <li class="disabled"><span class="check">✗</span> Follow-up sequences</li>
+                    <li class="disabled"><span class="check">✗</span> API access</li>
+                    <li class="disabled"><span class="check">✗</span> Priority support</li>
                 </ul>
                 {% if user and user.plan == 'free' %}
-                <button class="btn current-plan" disabled>Current Plan</button>
+                <button class="btn current-plan" disabled>✓ Current Plan</button>
                 {% else %}
-                <a href="/register" class="btn btn-secondary">Get Started</a>
+                <a href="/dashboard" class="btn btn-secondary">Get Started Free</a>
                 {% endif %}
             </div>
 
+            <!-- Pro -->
             <div class="plan featured">
-                <div class="plan-name">PRO</div>
-                <div class="plan-price">$29 <span>/mo</span></div>
-                <div class="plan-price-idr">Rp 450.000/bulan</div>
+                <div class="plan-icon pro">⚡</div>
+                <div class="plan-name">Pro</div>
+                <div class="plan-desc">For serious outreach teams and agencies</div>
+                <div class="plan-price">
+                    <div class="price-amount"><span class="price-original monthly-price" style="display:none">$29</span><span class="monthly-price">$15</span><span class="yearly-price" style="display:none">$12</span></div>
+                    <div class="price-period">per month, <span class="monthly-price">billed monthly</span><span class="yearly-price" style="display:none">billed yearly ($144/yr)</span></div>
+                    <div class="price-idr monthly-price">≈ IDR 249,000/mo</div>
+                    <div class="price-idr yearly-price" style="display:none">≈ IDR 199,000/mo</div>
+                </div>
                 <ul class="plan-features">
-                    <li>500 emails per day</li>
-                    <li>Everything in Starter</li>
-                    <li>Follow-up sequences</li>
-                    <li>API access</li>
-                    <li>Priority support</li>
-                    <li>Custom templates</li>
+                    <li class="highlight"><span class="check">✓</span> <strong>500 emails per day</strong></li>
+                    <li><span class="check">✓</span> Everything in Starter</li>
+                    <li class="highlight"><span class="check">✓</span> <strong>Follow-up sequences</strong></li>
+                    <li class="highlight"><span class="check">✓</span> <strong>API access</strong></li>
+                    <li><span class="check">✓</span> Custom templates</li>
+                    <li><span class="check">✓</span> Advanced analytics</li>
+                    <li><span class="check">✓</span> Priority support</li>
+                    <li class="disabled"><span class="check">✗</span> White-label</li>
                 </ul>
                 {% if user and user.plan == 'pro' %}
-                <button class="btn current-plan" disabled>Current Plan</button>
+                <button class="btn current-plan" disabled>✓ Current Plan</button>
                 {% elif user %}
-                <form method="POST" action="/subscribe/pro">
-                    <button type="submit" class="btn">Pay with Card — $29</button>
+                <a href="/pay/crypto/pro" class="btn btn-primary" style="background: linear-gradient(135deg, #1a2a1a, #2a4a2a); border: 1px solid #3a6a3a; color: #4ade80; font-size: 16px; padding: 16px 24px;">₿ Pay with Crypto — $15/mo</a>
+                <form method="POST" action="/subscribe/pro" style="margin-top: 8px;">
+                    <button type="submit" class="btn btn-secondary" style="font-size: 12px; padding: 10px 16px;">💳 Pay with Card</button>
                 </form>
-                <form method="POST" action="/subscribe/pro/idr">
-                    <button type="submit" class="btn btn-idr">🇮🇩 QRIS / GoPay — Rp 450rb</button>
-                </form>
-                <div class="payment-methods">
-                    Visa • Mastercard • PayPal<br>
-                    QRIS • GoPay • OVO • ShopeePay • VA Bank
+                <div class="payment-info">
+                    <div class="payment-icon">VISA</div>
+                    <div class="payment-icon">MC</div>
+                    <div class="payment-icon">PP</div>
+                    <div class="payment-icon">₿</div>
+                    <span style="color:#444;font-size:11px">Secure payment</span>
                 </div>
                 {% else %}
-                <a href="/register" class="btn">Get Started</a>
+                <a href="/register" class="btn btn-primary">Start Free Trial</a>
                 {% endif %}
             </div>
 
+            <!-- Enterprise -->
             <div class="plan">
-                <div class="plan-name">ENTERPRISE</div>
-                <div class="plan-price">$99 <span>/mo</span></div>
-                <div class="plan-price-idr">Rp 1.550.000/bulan</div>
+                <div class="plan-icon enterprise">👑</div>
+                <div class="plan-name">Enterprise</div>
+                <div class="plan-desc">For large teams with custom requirements</div>
+                <div class="plan-price">
+                    <div class="price-amount"><span class="monthly-price">$49</span><span class="yearly-price" style="display:none">$39</span></div>
+                    <div class="price-period">per month, <span class="monthly-price">billed monthly</span><span class="yearly-price" style="display:none">billed yearly ($468/yr)</span></div>
+                    <div class="price-idr monthly-price">≈ IDR 799,000/mo</div>
+                    <div class="price-idr yearly-price" style="display:none">≈ IDR 639,000/mo</div>
+                </div>
                 <ul class="plan-features">
-                    <li>Unlimited emails</li>
-                    <li>Everything in Pro</li>
-                    <li>White-label</li>
-                    <li>Dedicated support</li>
-                    <li>Custom integrations</li>
-                    <li>SLA guarantee</li>
+                    <li class="highlight"><span class="check">✓</span> <strong>Unlimited emails</strong></li>
+                    <li><span class="check">✓</span> Everything in Pro</li>
+                    <li class="highlight"><span class="check">✓</span> <strong>White-label</strong></li>
+                    <li class="highlight"><span class="check">✓</span> <strong>Dedicated support</strong></li>
+                    <li class="highlight"><span class="check">✓</span> <strong>Custom integrations</strong></li>
+                    <li><span class="check">✓</span> SLA guarantee</li>
+                    <li><span class="check">✓</span> Custom domain</li>
+                    <li><span class="check">✓</span> Team management</li>
                 </ul>
                 {% if user and user.plan == 'enterprise' %}
-                <button class="btn current-plan" disabled>Current Plan</button>
+                <button class="btn current-plan" disabled>✓ Current Plan</button>
                 {% elif user %}
-                <form method="POST" action="/subscribe/enterprise">
-                    <button type="submit" class="btn">Pay with Card — $99</button>
+                <a href="/pay/crypto/enterprise" class="btn" style="background: linear-gradient(135deg, #1a2a1a, #2a4a2a); border: 1px solid #3a6a3a; color: #4ade80; font-size: 16px; padding: 16px 24px;">₿ Pay with Crypto — $49/mo</a>
+                <form method="POST" action="/subscribe/enterprise" style="margin-top: 8px;">
+                    <button type="submit" class="btn btn-secondary" style="font-size: 12px; padding: 10px 16px;">💳 Pay with Card</button>
                 </form>
-                <form method="POST" action="/subscribe/enterprise/idr">
-                    <button type="submit" class="btn btn-idr">🇮🇩 QRIS / GoPay — Rp 1.5jt</button>
-                </form>
+                <div class="payment-info">
+                    <div class="payment-icon">VISA</div>
+                    <div class="payment-icon">MC</div>
+                    <div class="payment-icon">PP</div>
+                    <div class="payment-icon">₿</div>
+                    <span style="color:#444;font-size:11px">Secure payment</span>
+                </div>
                 {% else %}
-                <a href="/register" class="btn">Get Started</a>
+                <a href="/register" class="btn">Contact Sales</a>
                 {% endif %}
             </div>
         </div>
 
-        <div class="footer-info">
-            <p>🔒 Secure payments by LemonSqueezy & Midtrans</p>
-            <div class="guarantee">30-day money back guarantee</div>
-            <p style="margin-top: 30px;">0xChapo Labs © 2024</p>
+        <!-- Feature Comparison -->
+        <div class="compare-section">
+            <h2>Compare all features</h2>
+            <p>See exactly what's included in each plan</p>
+            <table class="compare-table">
+                <thead>
+                    <tr>
+                        <th>Feature</th>
+                        <th class="plan-col-header">Starter</th>
+                        <th class="plan-col-header">Pro</th>
+                        <th class="plan-col-header">Enterprise</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="feature-name">Daily email limit</td>
+                        <td>10</td>
+                        <td>500</td>
+                        <td>Unlimited</td>
+                    </tr>
+                    <tr>
+                        <td class="feature-name">AI email generation</td>
+                        <td><span class="check-mark">✓</span></td>
+                        <td><span class="check-mark">✓</span></td>
+                        <td><span class="check-mark">✓</span></td>
+                    </tr>
+                    <tr>
+                        <td class="feature-name">Lead scraping</td>
+                        <td><span class="check-mark">✓</span></td>
+                        <td><span class="check-mark">✓</span></td>
+                        <td><span class="check-mark">✓</span></td>
+                    </tr>
+                    <tr>
+                        <td class="feature-name">Email verification</td>
+                        <td><span class="check-mark">✓</span></td>
+                        <td><span class="check-mark">✓</span></td>
+                        <td><span class="check-mark">✓</span></td>
+                    </tr>
+                    <tr>
+                        <td class="feature-name">CSV import/export</td>
+                        <td><span class="check-mark">✓</span></td>
+                        <td><span class="check-mark">✓</span></td>
+                        <td><span class="check-mark">✓</span></td>
+                    </tr>
+                    <tr>
+                        <td class="feature-name">Follow-up sequences</td>
+                        <td><span class="cross-mark">✗</span></td>
+                        <td><span class="check-mark">✓</span></td>
+                        <td><span class="check-mark">✓</span></td>
+                    </tr>
+                    <tr>
+                        <td class="feature-name">API access</td>
+                        <td><span class="cross-mark">✗</span></td>
+                        <td><span class="check-mark">✓</span></td>
+                        <td><span class="check-mark">✓</span></td>
+                    </tr>
+                    <tr>
+                        <td class="feature-name">Custom templates</td>
+                        <td><span class="cross-mark">✗</span></td>
+                        <td><span class="check-mark">✓</span></td>
+                        <td><span class="check-mark">✓</span></td>
+                    </tr>
+                    <tr>
+                        <td class="feature-name">White-label</td>
+                        <td><span class="cross-mark">✗</span></td>
+                        <td><span class="cross-mark">✗</span></td>
+                        <td><span class="check-mark">✓</span></td>
+                    </tr>
+                    <tr>
+                        <td class="feature-name">Custom domain</td>
+                        <td><span class="cross-mark">✗</span></td>
+                        <td><span class="cross-mark">✗</span></td>
+                        <td><span class="check-mark">✓</span></td>
+                    </tr>
+                    <tr>
+                        <td class="feature-name">Team management</td>
+                        <td><span class="cross-mark">✗</span></td>
+                        <td><span class="cross-mark">✗</span></td>
+                        <td><span class="check-mark">✓</span></td>
+                    </tr>
+                    <tr>
+                        <td class="feature-name">SLA guarantee</td>
+                        <td><span class="cross-mark">✗</span></td>
+                        <td><span class="cross-mark">✗</span></td>
+                        <td><span class="check-mark">✓</span></td>
+                    </tr>
+                    <tr>
+                        <td class="feature-name">Support</td>
+                        <td>Community</td>
+                        <td>Priority email</td>
+                        <td>Dedicated manager</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- FAQ -->
+        <div class="faq-section">
+            <h2>Frequently asked questions</h2>
+            <p>Everything you need to know about 0xChapo</p>
+            <div class="faq-grid">
+                <div class="faq-item" onclick="toggleFaq(this)">
+                    <div class="faq-question">
+                        Can I change plans anytime?
+                        <span class="arrow">▼</span>
+                    </div>
+                    <div class="faq-answer">Yes! You can upgrade or downgrade your plan at any time. When upgrading, you'll be charged the prorated difference. When downgrading, the change takes effect at the end of your billing period.</div>
+                </div>
+                <div class="faq-item" onclick="toggleFaq(this)">
+                    <div class="faq-question">
+                        What payment methods do you accept?
+                        <span class="arrow">▼</span>
+                    </div>
+                    <div class="faq-answer">We accept all major credit and debit cards (Visa, Mastercard, American Express) through our secure payment partner LemonSqueezy. We also accept <strong>cryptocurrency</strong> (BTC, ETH, USDT, and 100+ coins) via NOWPayments.</div>
+                </div>
+                <div class="faq-item" onclick="toggleFaq(this)">
+                    <div class="faq-question">
+                        Is there a free trial?
+                        <span class="arrow">▼</span>
+                    </div>
+                    <div class="faq-answer">Yes! All new accounts get a 7-day free trial of the Pro plan. No credit card required to start. After the trial, you can choose to upgrade or continue with the free Starter plan.</div>
+                </div>
+                <div class="faq-item" onclick="toggleFaq(this)">
+                    <div class="faq-question">
+                        What happens if I hit my daily limit?
+                        <span class="arrow">▼</span>
+                    </div>
+                    <div class="faq-answer">Your email sending will pause until the next day when your limit resets. You can upgrade to a higher plan at any time to increase your daily limit.</div>
+                </div>
+                <div class="faq-item" onclick="toggleFaq(this)">
+                    <div class="faq-question">
+                        Can I cancel my subscription?
+                        <span class="arrow">▼</span>
+                    </div>
+                    <div class="faq-answer">Absolutely. You can cancel your subscription at any time from your account settings. You'll continue to have access until the end of your current billing period.</div>
+                </div>
+                <div class="faq-item" onclick="toggleFaq(this)">
+                    <div class="faq-question">
+                        Do you offer refunds?
+                        <span class="arrow">▼</span>
+                    </div>
+                    <div class="faq-answer">We offer a 30-day money-back guarantee. If you're not satisfied with 0xChapo within the first 30 days, contact us for a full refund.</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Trust -->
+        <div class="trust-section">
+            <div class="trust-badges">
+                <div class="trust-item"><span class="trust-icon">🔒</span> SSL Encrypted</div>
+                <div class="trust-item"><span class="trust-icon">💳</span> Secure Payments</div>
+                <div class="trust-item"><span class="trust-icon">🛡️</span> 30-Day Guarantee</div>
+                <div class="trust-item"><span class="trust-icon">⚡</span> Instant Activation</div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+            <p>Powered by LemonSqueezy • 0xChapo Labs © 2026</p>
         </div>
     </div>
+
+    <script>
+        function toggleBilling() {
+            const toggle = document.getElementById('billing-toggle');
+            const monthlyLabel = document.getElementById('monthly-label');
+            const yearlyLabel = document.getElementById('yearly-label');
+            const monthlyPrices = document.querySelectorAll('.monthly-price');
+            const yearlyPrices = document.querySelectorAll('.yearly-price');
+
+            toggle.classList.toggle('yearly');
+            const isYearly = toggle.classList.contains('yearly');
+
+            monthlyLabel.classList.toggle('active', !isYearly);
+            yearlyLabel.classList.toggle('active', isYearly);
+
+            monthlyPrices.forEach(el => el.style.display = isYearly ? 'none' : '');
+            yearlyPrices.forEach(el => el.style.display = isYearly ? '' : 'none');
+        }
+
+        function toggleFaq(item) {
+            item.classList.toggle('open');
+        }
+    </script>
 </body>
 </html>

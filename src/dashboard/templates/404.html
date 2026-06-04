@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>404 — 0xChapo</title>
+    <link rel="icon" href="/static/favicon.svg">
+    <link rel="stylesheet" href="/static/style.css">
+    <style>
+        .error-page {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 80vh;
+            text-align: center;
+            padding: 40px 20px;
+        }
+        .error-icon {
+            font-size: 80px;
+            margin-bottom: 24px;
+            opacity: 0.6;
+        }
+        .error-code {
+            font-size: 5em;
+            font-weight: 800;
+            background: linear-gradient(135deg, #4a6aee, #8a6aee);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: -2px;
+            margin-bottom: 12px;
+        }
+        .error-title {
+            font-size: 1.4em;
+            color: #e0e0e0;
+            font-weight: 600;
+            margin-bottom: 12px;
+        }
+        .error-desc {
+            color: #555;
+            font-size: 15px;
+            line-height: 1.6;
+            max-width: 420px;
+            margin-bottom: 36px;
+        }
+        .error-actions {
+            display: flex;
+            gap: 12px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <nav class="nav" style="border-bottom: none; justify-content: center;">
+            <a href="/" class="nav-brand">
+                <div class="nav-icon">◆</div>
+                <span class="nav-title">0XCHAPO</span>
+            </a>
+        </nav>
+
+        <div class="error-page">
+            <div class="error-icon">🔍</div>
+            <div class="error-code">404</div>
+            <div class="error-title">Page not found</div>
+            <div class="error-desc">The page you're looking for doesn't exist or has been moved.</div>
+            <div class="error-actions">
+                <a href="/" class="btn btn-primary">Go Home</a>
+                <a href="/dashboard" class="btn btn-secondary">Dashboard</a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

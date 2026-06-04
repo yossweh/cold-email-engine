@@ -1,0 +1,28 @@
+{
+  "email": "achmadyosifa9@gmail.com",
+  "name": "yyhyy",
+  "password_hash": "c450b2c749c1828de25b46349257df0d824ea731148d5cf5e2d7df3496f92896",
+  "salt": "1a2a7141991915f8cf2df67e94787881",
+  "created": "2026-06-04T12:39:54.982629",
+  "plan": "pro",
+  "plan_expires": "2026-07-04T13:51:54.908249",
+  "trial_expires": "2026-06-11T12:39:54.982647",
+  "license_key": null,
+  "usage": {
+    "emails_sent": 0,
+    "emails_limit": 500,
+    "last_reset": "2026-06-04T13:51:54.908258"
+  },
+  "settings": {
+    "smtp_host": "",
+    "smtp_port": 587,
+    "smtp_user": "",
+    "smtp_password": "",
+    "from_name": "yyhyy",
+    "from_email": "achmadyosifa9@gmail.com",
+    "anthropic_api_key": ""
+  },
+  "activated_at": "2026-06-04T13:51:54.908260",
+  "onboarding_completed": true,
+  "onboarding_completed_at": "2026-06-04T15:31:41.678069"
+}

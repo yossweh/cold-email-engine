@@ -1,0 +1,27 @@
+{
+  "email": "sosovim252@aspensif.com",
+  "name": "huhu",
+  "password_hash": "ed2cc192cce905d7b22a2b4dddf650315a84c6f78418fdaad1cbf97bdee3e264",
+  "salt": "de848745aa62119de76efa0a6eead0d4",
+  "created": "2026-06-04T15:53:24.866099",
+  "plan": "free",
+  "plan_expires": null,
+  "trial_expires": "2026-06-11T15:53:27.148993",
+  "license_key": null,
+  "usage": {
+    "emails_sent": 2,
+    "emails_limit": 500,
+    "last_reset": "2026-06-04T15:53:27.149047"
+  },
+  "settings": {
+    "smtp_host": "",
+    "smtp_port": 587,
+    "smtp_user": "",
+    "smtp_password": "",
+    "from_name": "huhu",
+    "from_email": "sosovim252@aspensif.com",
+    "anthropic_api_key": ""
+  },
+  "onboarding_completed": true,
+  "onboarding_completed_at": "2026-06-04T15:53:37.336455"
+}

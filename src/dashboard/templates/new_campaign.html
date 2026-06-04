@@ -4,28 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>New Campaign — 0xChapo</title>
+    <link rel="stylesheet" href="/static/style.css">
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #0a0a0a; color: #e0e0e0; }
-        .container { max-width: 800px; margin: 0 auto; padding: 20px; }
-        .nav { display: flex; justify-content: space-between; align-items: center; padding: 15px 0; border-bottom: 1px solid #1a1a1a; margin-bottom: 30px; }
-        .nav-brand { display: flex; align-items: center; gap: 10px; text-decoration: none; }
-        .nav-icon { width: 35px; height: 35px; background: linear-gradient(135deg, #1a1a2e, #16213e); border: 1px solid #4a4a6a; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 16px; }
-        .nav-title { color: #e0e0e0; font-size: 1.2em; letter-spacing: 2px; }
-        h1 { color: #e0e0e0; margin-bottom: 30px; font-weight: 300; font-size: 1.8em; }
-        .card { background: #111; border: 1px solid #1a1a1a; border-radius: 12px; padding: 30px; margin-bottom: 20px; }
-        label { display: block; color: #666; margin-bottom: 6px; margin-top: 20px; font-size: 13px; text-transform: uppercase; letter-spacing: 1px; }
-        input, textarea, select { width: 100%; padding: 12px 15px; background: #0f0f0f; border: 1px solid #1a1a1a; border-radius: 8px; color: #fff; font-size: 14px; transition: border-color 0.2s; }
-        input:focus, textarea:focus, select:focus { outline: none; border-color: #4a4a6a; }
-        textarea { min-height: 120px; resize: vertical; }
-        .checkbox-label { display: flex; align-items: center; gap: 10px; color: #888; font-size: 14px; cursor: pointer; }
+        .checkbox-label { display: flex; align-items: center; gap: 10px; color: #888; font-size: 14px; cursor: pointer; text-transform: none; letter-spacing: 0; }
         .checkbox-label input { width: auto; accent-color: #4a4a6a; }
-        .btn { display: inline-block; padding: 14px 28px; background: linear-gradient(135deg, #2a2a3e, #3a3a5e); color: #fff; text-decoration: none; border-radius: 8px; font-weight: bold; border: 1px solid #4a4a6a; cursor: pointer; font-size: 15px; transition: all 0.2s; }
-        .btn:hover { background: linear-gradient(135deg, #3a3a4e, #4a4a6e); border-color: #6a6a8a; }
-        .btn-secondary { background: transparent; border-color: #333; color: #888; }
-        .btn-secondary:hover { border-color: #555; color: #aaa; }
         .actions { display: flex; gap: 15px; margin-top: 30px; }
-        .hint { color: #444; font-size: 12px; margin-top: 5px; }
     </style>
 </head>
 <body>
@@ -35,25 +18,52 @@
                 <div class="nav-icon">◆</div>
                 <span class="nav-title">0XCHAPO</span>
             </a>
+            <div class="nav-links">
+                <a href="/dashboard">Dashboard</a>
+                <a href="/campaign/new" class="active">Campaigns</a>
+                <a href="/scrape">Scrape</a>
+                <a href="/leads">Leads</a>
+                <a href="/verify">Verify</a>
+                <a href="/sequences">Sequences</a>
+                <a href="/templates">Templates</a>
+                <a href="/analytics">Analytics</a>
+                <a href="/activity">Activity</a>
+                <a href="/pricing">Pricing</a>
+                <a href="/profile">Profile</a>
+            </div>
+            <div class="nav-user">
+                <span class="nav-plan plan-{{ user.plan|default('free') }}">{{ user.plan|default('free')|upper }}</span>
+                <a href="/logout" style="color: #666; font-size: 13px;">Logout</a>
+            </div>
         </nav>
 
-        <h1>New Campaign</h1>
+        <h1 style="color: #e0e0e0; font-weight: 300; font-size: 1.8em; margin-bottom: 30px;">New Campaign</h1>
+
+        {% if not user.settings.smtp_host or not user.settings.smtp_user or not user.settings.smtp_password %}
+        <div style="background: #2a1a1a; border: 1px solid #4a2a2a; border-radius: 12px; padding: 20px; margin-bottom: 25px; display: flex; align-items: center; gap: 15px;">
+            <span style="font-size: 28px;">⚠️</span>
+            <div>
+                <div style="color: #f87171; font-weight: 600; margin-bottom: 4px;">SMTP Not Configured</div>
+                <div style="color: #999; font-size: 13px;">You need to set up your SMTP server before sending campaigns. <a href="/profile" style="color: #8a8aba;">Configure now →</a></div>
+            </div>
+        </div>
+        {% endif %}
 
         <form method="POST">
             <div class="card">
                 <label for="leads">Target Leads</label>
                 <textarea name="leads" id="leads" placeholder="https://company1.com&#10;john@company2.com&#10;jane@example.com"></textarea>
-                <div class="hint">One URL or email per line</div>
+                <p class="form-help">One URL or email per line</p>
 
-                <label for="product">Your Product / Service</label>
+                <label for="product" style="margin-top: 20px;">Your Product / Service</label>
                 <textarea name="product" id="product" placeholder="We build AI chatbots that increase conversion by 40%..." style="min-height: 80px;"></textarea>
 
-                <div style="display: flex; gap: 20px;">
-                    <div style="flex: 1;">
+                <div class="form-row">
+                    <div class="form-group">
                         <label for="sender_name">Your Name</label>
                         <input type="text" name="sender_name" id="sender_name" placeholder="John Doe">
                     </div>
-                    <div style="flex: 1;">
+                    <div class="form-group">
                         <label for="sender_company">Your Company</label>
                         <input type="text" name="sender_company" id="sender_company" placeholder="Acme Inc">
                     </div>

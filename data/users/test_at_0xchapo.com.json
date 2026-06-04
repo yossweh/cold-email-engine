@@ -1,0 +1,27 @@
+{
+  "email": "test@0xchapo.com",
+  "name": "TestUser",
+  "password_hash": "45097dccfb8e0d0310d0add08f47a374b7358005f618ab55cc426b3c6bee66c4",
+  "salt": "9ab05597fb9aa2e5b21f837ef5ef34a5",
+  "created": "2026-06-04T01:07:13.646661",
+  "plan": "free",
+  "plan_expires": null,
+  "license_key": null,
+  "usage": {
+    "emails_sent": 5,
+    "emails_limit": 10,
+    "last_reset": "2026-06-04T01:07:13.646677"
+  },
+  "settings": {
+    "smtp_host": "",
+    "smtp_port": 587,
+    "smtp_user": "",
+    "smtp_password": "",
+    "from_name": "",
+    "from_email": "",
+    "anthropic_api_key": "sk-893d074d399e4e29b798cf29360bbfc5"
+  },
+  "trial_expires": "2026-06-11T10:49:52.054513",
+  "onboarding_completed": true,
+  "onboarding_completed_at": "2026-06-04T15:31:41.674844"
+}

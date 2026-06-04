@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile — 0xChapo</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <style>
+        .profile-header { display: flex; align-items: center; gap: 30px; padding: 30px; background: linear-gradient(135deg, #111118, #16162a); border: 1px solid #2a2a3e; border-radius: 16px; margin-bottom: 25px; }
+        .avatar { width: 100px; height: 100px; border-radius: 50%; background: linear-gradient(135deg, #2a3a5e, #4a5a8e); display: flex; align-items: center; justify-content: center; font-size: 36px; font-weight: bold; color: #fff; border: 3px solid #4a4a6a; flex-shrink: 0; }
+        .profile-info { flex: 1; }
+        .profile-name { font-size: 1.8em; font-weight: 600; margin-bottom: 5px; }
+        .profile-email { color: #888; font-size: 14px; margin-bottom: 10px; }
+        .profile-badges { display: flex; gap: 10px; flex-wrap: wrap; }
+        .badge-plan { padding: 4px 12px; border-radius: 20px; font-size: 11px; font-weight: bold; letter-spacing: 1px; }
+        .badge-joined { background: #1a2a1a; color: #4ade80; border: 1px solid #2a4a2a; padding: 4px 12px; border-radius: 20px; font-size: 11px; }
+        .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; margin-bottom: 25px; }
+        .stat-card { background: #111118; border: 1px solid #1a1a1e; border-radius: 12px; padding: 20px; text-align: center; transition: border-color 0.2s; }
+        .stat-card:hover { border-color: #2a2a3e; }
+        .stat-number { font-size: 2em; font-weight: 700; color: #fff; margin-bottom: 5px; }
+        .stat-label { color: #666; font-size: 12px; text-transform: uppercase; letter-spacing: 1px; }
+        @media (max-width: 768px) {
+            .profile-header { flex-direction: column; text-align: center; }
+            .profile-badges { justify-content: center; }
+            .stats-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <nav class="nav">
+            <a href="/dashboard" class="nav-brand">
+                <div class="nav-icon">◆</div>
+                <span class="nav-title">0XCHAPO</span>
+            </a>
+            <div class="nav-links">
+                <a href="/dashboard">Dashboard</a>
+                <a href="/campaign/new">Campaign</a>
+                <a href="/scrape">Scrape</a>
+                <a href="/leads">Leads</a>
+                <a href="/analytics">Analytics</a>
+                <a href="/activity">Activity</a>
+                <a href="/pricing">Pricing</a>
+                <a href="/profile" class="active">Profile</a>
+                <a href="/logout">Logout</a>
+            </div>
+        </nav>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+        {% for category, message in messages %}
+        <div class="flash flash-{{ category }}">{{ message }}</div>
+        {% endfor %}
+        {% endif %}
+        {% endwith %}
+
+        <!-- Profile Header -->
+        <div class="profile-header">
+            <div class="avatar">{{ user.name[0]|upper if user.name else user.email[0]|upper }}</div>
+            <div class="profile-info">
+                <div class="profile-name">{{ user.name or user.email.split('@')[0] }}</div>
+                <div class="profile-email">{{ user.email }}</div>
+                <div class="profile-badges">
+                    <span class="badge badge-{{ user.plan }} badge-plan">{{ user.plan|upper }}</span>
+                    {% if user.plan_expires %}
+                    <span class="badge badge-joined">Expires {{ user.plan_expires[:10] }}</span>
+                    {% endif %}
+                    {% if user.created_at %}
+                    <span class="badge badge-joined">Joined {{ user.created_at[:10] }}</span>
+                    {% endif %}
+                </div>
+            </div>
+            <a href="/settings" class="btn btn-secondary btn-sm">⚙️ Settings</a>
+        </div>
+
+        <!-- Stats -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-number">{{ stats.emails_sent or 0 }}</div>
+                <div class="stat-label">Emails Sent</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">{{ stats.campaigns or 0 }}</div>
+                <div class="stat-label">Campaigns</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">{{ stats.leads or 0 }}</div>
+                <div class="stat-label">Leads</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">{{ stats.emails_limit or 10 }}</div>
+                <div class="stat-label">Daily Limit</div>
+            </div>
+        </div>
+
+        <!-- Usage -->
+        <div class="card">
+            <div class="card-header">
+                <h2>📊 Usage Today</h2>
+                <span style="color: #888; font-size: 14px;">{{ stats.emails_sent or 0 }} / {{ stats.emails_limit or 10 }}</span>
+            </div>
+            {% set usage_pct = ((stats.emails_sent or 0) / (stats.emails_limit or 10) * 100) if (stats.emails_limit or 10) > 0 else 0 %}
+            <div class="progress-bar">
+                <div class="progress-fill {% if usage_pct < 50 %}green{% elif usage_pct < 80 %}yellow{% else %}red{% endif %}" style="width: {{ [usage_pct, 100]|min }}%"></div>
+            </div>
+            <p style="color: #666; font-size: 12px; margin-top: 8px;">
+                {% if usage_pct < 50 %}
+                ✅ You're within your daily limit.
+                {% elif usage_pct < 80 %}
+                ⚠️ Getting close to your daily limit.
+                {% else %}
+                🔴 Almost at your daily limit. <a href="/pricing" style="color: #8a8aba;">Upgrade plan</a>
+                {% endif %}
+            </p>
+        </div>
+
+        <!-- Edit Profile -->
+        <div class="card">
+            <div class="card-header">
+                <h2>👤 Edit Profile</h2>
+            </div>
+            <form method="POST" action="/profile">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="name">Display Name</label>
+                        <input type="text" name="name" id="name" value="{{ user.name or '' }}" placeholder="Your name">
+                    </div>
+                    <div class="form-group">
+                        <label for="company">Company</label>
+                        <input type="text" name="company" id="company" value="{{ user.company or '' }}" placeholder="Your company">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="timezone">Timezone</label>
+                        <select name="timezone" id="timezone">
+                            <option value="Asia/Jakarta" {% if user.timezone == 'Asia/Jakarta' %}selected{% endif %}>WIB (Jakarta)</option>
+                            <option value="Asia/Makassar" {% if user.timezone == 'Asia/Makassar' %}selected{% endif %}>WITA (Makassar)</option>
+                            <option value="Asia/Jayapura" {% if user.timezone == 'Asia/Jayapura' %}selected{% endif %}>WIT (Jayapura)</option>
+                            <option value="UTC" {% if user.timezone == 'UTC' %}selected{% endif %}>UTC</option>
+                            <option value="US/Eastern" {% if user.timezone == 'US/Eastern' %}selected{% endif %}>US Eastern</option>
+                            <option value="US/Pacific" {% if user.timezone == 'US/Pacific' %}selected{% endif %}>US Pacific</option>
+                            <option value="Europe/London" {% if user.timezone == 'Europe/London' %}selected{% endif %}>UK (London)</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="website">Website</label>
+                        <input type="url" name="website" id="website" value="{{ user.website or '' }}" placeholder="https://yoursite.com">
+                    </div>
+                </div>
+                <button type="submit" class="btn" style="margin-top: 10px;">Save Changes</button>
+            </form>
+        </div>
+
+        <!-- SMTP Settings -->
+        <div class="card">
+            <div class="card-header">
+                <h2>📧 SMTP Settings</h2>
+                {% if user.settings.smtp_host and user.settings.smtp_user %}
+                <span style="background: #1a2a1a; color: #4ade80; border: 1px solid #2a4a2a; padding: 4px 12px; border-radius: 20px; font-size: 11px;">✓ Configured</span>
+                {% else %}
+                <span style="background: #2a1a1a; color: #f87171; border: 1px solid #4a2a2a; padding: 4px 12px; border-radius: 20px; font-size: 11px;">Not configured</span>
+                {% endif %}
+            </div>
+            <form method="POST" action="/profile/smtp">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="from_name">Sender Name</label>
+                        <input type="text" name="from_name" id="from_name" value="{{ user.settings.from_name|default('') }}" placeholder="John Doe">
+                    </div>
+                    <div class="form-group">
+                        <label for="from_email">Sender Email</label>
+                        <input type="email" name="from_email" id="from_email" value="{{ user.settings.from_email|default('') }}" placeholder="john@company.com">
+                    </div>
+                </div>
+                <div style="background: #0d0d14; border: 1px solid #1a1a2e; border-radius: 12px; padding: 20px; margin: 10px 0;">
+                    <div style="color: #999; font-size: 12px; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 16px;">SMTP Server</div>
+                    <div class="form-row">
+                        <div class="form-group" style="flex: 2;">
+                            <label for="smtp_host">SMTP Host</label>
+                            <input type="text" name="smtp_host" id="smtp_host" value="{{ user.settings.smtp_host|default('') }}" placeholder="smtp.gmail.com">
+                        </div>
+                        <div class="form-group">
+                            <label for="smtp_port">Port</label>
+                            <input type="number" name="smtp_port" id="smtp_port" value="{{ user.settings.smtp_port|default(587) }}">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="smtp_user">Username</label>
+                            <input type="text" name="smtp_user" id="smtp_user" value="{{ user.settings.smtp_user|default('') }}" placeholder="your@email.com">
+                        </div>
+                        <div class="form-group">
+                            <label for="smtp_password">Password</label>
+                            <input type="password" name="smtp_password" id="smtp_password" value="{{ user.settings.smtp_password|default('') }}" placeholder="App password or SMTP password">
+                        </div>
+                    </div>
+                </div>
+                <p style="color: #555; font-size: 12px; margin-top: 8px;">💡 Gmail: use App Password (Settings → Security → 2FA → App Passwords). SendGrid: use API Key as password.</p>
+                <button type="submit" class="btn" style="margin-top: 10px;">Save SMTP Settings</button>
+            </form>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="card">
+            <div class="card-header">
+                <h2>⚡ Quick Actions</h2>
+            </div>
+            <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                <a href="/campaign/new" class="btn btn-sm">📧 New Campaign</a>
+                <a href="/scrape" class="btn btn-sm">🔍 Scrape Leads</a>
+                <a href="/leads" class="btn btn-sm">📋 View Leads</a>
+                <a href="/verify" class="btn btn-sm">✅ Verify Emails</a>
+                <a href="/pricing" class="btn btn-sm btn-secondary">💎 Upgrade Plan</a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

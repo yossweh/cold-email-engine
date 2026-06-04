@@ -1,0 +1,27 @@
+{
+  "email": "cobegi1555@aspensif.com",
+  "name": "cobegi1555",
+  "password_hash": "113557ac6a545c6c542433704d6e39aef9675dbf9528d324c71b7795af77b714",
+  "salt": "95804d9f6f8a7d5b916dea7155f1e406",
+  "created": "2026-06-04T16:57:55.826871",
+  "plan": "free",
+  "plan_expires": null,
+  "trial_expires": "2026-06-11T16:57:59.975250",
+  "license_key": null,
+  "usage": {
+    "emails_sent": 0,
+    "emails_limit": 500,
+    "last_reset": "2026-06-04T16:57:59.975300"
+  },
+  "settings": {
+    "smtp_host": "",
+    "smtp_port": 587,
+    "smtp_user": "",
+    "smtp_password": "",
+    "from_name": "cobegi1555",
+    "from_email": "cobegi1555@aspensif.com",
+    "anthropic_api_key": ""
+  },
+  "onboarding_completed": true,
+  "onboarding_completed_at": "2026-06-04T16:58:10.669479"
+}

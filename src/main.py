@@ -20,17 +20,24 @@ from src.sender.email_sender import EmailSender
 class ColdEmailEngine:
     """Main pipeline for cold email campaigns."""
 
-    def __init__(self, config_path: str = None):
+    def __init__(self, config_path: str = None, smtp_config: dict = None):
         self.config = self._load_config(config_path)
         self.scraper = LeadScraper()
         self.generator = EmailGenerator(self.config['anthropic_api_key'])
+
+        # Use custom SMTP config if provided, otherwise use platform defaults
+        if smtp_config:
+            smtp = smtp_config
+        else:
+            smtp = self.config
+
         self.sender = EmailSender(
-            smtp_host=self.config['smtp_host'],
-            smtp_port=self.config['smtp_port'],
-            smtp_user=self.config['smtp_user'],
-            smtp_password=self.config['smtp_password'],
-            from_name=self.config['from_name'],
-            from_email=self.config['from_email'],
+            smtp_host=smtp.get('smtp_host', self.config['smtp_host']),
+            smtp_port=int(smtp.get('smtp_port', self.config['smtp_port'])),
+            smtp_user=smtp.get('smtp_user', self.config['smtp_user']),
+            smtp_password=smtp.get('smtp_password', self.config['smtp_password']),
+            from_name=smtp.get('from_name', self.config['from_name']),
+            from_email=smtp.get('from_email', self.config['from_email']),
             max_per_hour=self.config.get('max_per_hour', 30),
             delay_seconds=self.config.get('delay_seconds', 60),
         )
@@ -79,9 +86,23 @@ class ColdEmailEngine:
         enriched_leads = []
         for i, lead in enumerate(leads):
             if isinstance(lead, str):
-                # It's a URL
-                data = self.scraper.scrape_company(lead)
-                data['email'] = data.get('contact_email', '')
+                if '@' in lead:
+                    # It's an email address
+                    data = {'email': lead, 'title': lead.split('@')[1].split('.')[0].title()}
+                    # Try to get company info from domain
+                    domain = lead.split('@')[1]
+                    if domain not in ['gmail.com', 'yahoo.com', 'hotmail.com', 'outlook.com']:
+                        try:
+                            scraped = self.scraper.scrape_company(f'https://{domain}')
+                            data.update({k: v for k, v in scraped.items() if v})
+                            if not data.get('title'):
+                                data['title'] = domain.split('.')[0].title()
+                        except:
+                            pass
+                else:
+                    # It's a URL
+                    data = self.scraper.scrape_company(lead)
+                    data['email'] = data.get('contact_email', '')
             else:
                 data = lead
                 if 'url' in data and not data.get('description'):

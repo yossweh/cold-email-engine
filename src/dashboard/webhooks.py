@@ -28,22 +28,6 @@ def lemonsqueezy_webhook():
     return jsonify(result)
 
 
-@webhook_bp.route('/webhook/midtrans', methods=['POST'])
-def midtrans_webhook():
-    """Handle Midtrans notification/webhook."""
-    notification = request.get_json()
-
-    if not notification:
-        return jsonify({'error': 'No payload'}), 400
-
-    result = payment_handler.handle_midtrans(notification)
-
-    if 'error' in result:
-        return jsonify(result), 404
-
-    return jsonify(result)
-
-
 @webhook_bp.route('/payment/status/<order_id>', methods=['GET'])
 def payment_status(order_id):
     """Check payment status."""

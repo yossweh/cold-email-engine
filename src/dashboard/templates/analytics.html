@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analytics — 0xChapo</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <style>
+        .charts-grid { display: grid; grid-template-columns: 2fr 1fr; gap: 20px; margin-bottom: 30px; }
+        .chart-card { background: #111118; border: 1px solid #1a1a1e; border-radius: 12px; padding: 25px; }
+        .chart-card canvas { max-height: 320px; }
+        .recent-list { list-style: none; padding: 0; }
+        .recent-item { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid #1a1a1a; }
+        .recent-item:last-child { border-bottom: none; }
+        .recent-label { color: #aaa; font-size: 14px; }
+        .recent-time { color: #555; font-size: 12px; }
+        @media (max-width: 768px) { .charts-grid { grid-template-columns: 1fr; } }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <nav class="nav">
+            <a href="/dashboard" class="nav-brand">
+                <div class="nav-icon">◆</div>
+                <span class="nav-title">0XCHAPO</span>
+            </a>
+            <div class="nav-links">
+                <a href="/campaign/new">Campaigns</a>
+                <a href="/scrape">Scrape</a>
+                <a href="/leads">Leads</a>
+                <a href="/verify">Verify</a>
+                <a href="/sequences">Sequences</a>
+                <a href="/templates">Templates</a>
+                <a href="/analytics" class="active">Analytics</a>
+                <a href="/activity">Activity</a>
+                <a href="/pricing">Pricing</a>
+                <a href="/profile">Profile</a>
+            </div>
+            <div class="nav-user">
+                <span class="nav-plan plan-{{ user.plan }}">{{ user.plan|upper }}</span>
+                <a href="/logout" style="color: #666; font-size: 13px;">Logout</a>
+            </div>
+        </nav>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+        {% for category, message in messages %}
+        <div class="flash flash-{{ category }}">{{ message }}</div>
+        {% endfor %}
+        {% endif %}
+        {% endwith %}
+
+        <!-- Stats -->
+        <div class="stats">
+            <div class="stat">
+                <div class="stat-icon">📧</div>
+                <div class="stat-label">Total Emails</div>
+                <div class="stat-value">{{ total_emails }}</div>
+                <div class="stat-sub">across all campaigns</div>
+            </div>
+            <div class="stat">
+                <div class="stat-icon">🚀</div>
+                <div class="stat-label">Total Campaigns</div>
+                <div class="stat-value">{{ total_campaigns }}</div>
+                <div class="stat-sub">created</div>
+            </div>
+            <div class="stat">
+                <div class="stat-icon">📊</div>
+                <div class="stat-label">Avg Per Day</div>
+                <div class="stat-value">{{ avg_per_day }}</div>
+                <div class="stat-sub">last 30 days</div>
+            </div>
+            <div class="stat">
+                <div class="stat-icon">✅</div>
+                <div class="stat-label">Success Rate</div>
+                <div class="stat-value">{{ success_rate }}%</div>
+                <div class="stat-sub">delivery rate</div>
+            </div>
+        </div>
+
+        <!-- Charts -->
+        <div class="charts-grid">
+            <div class="chart-card">
+                <div class="card-header">
+                    <span class="card-title">Emails Sent — Last 30 Days</span>
+                </div>
+                <canvas id="dailyChart"></canvas>
+            </div>
+            <div class="chart-card">
+                <div class="card-header">
+                    <span class="card-title">Campaign Status</span>
+                </div>
+                <canvas id="statusChart"></canvas>
+            </div>
+        </div>
+
+        <!-- Recent Activity -->
+        <div class="section">
+            <div class="section-header">
+                <span class="section-title">Recent Activity</span>
+                <a href="/activity" class="btn btn-sm btn-secondary">View All</a>
+            </div>
+            <div class="card">
+                {% if recent_activity %}
+                <ul class="recent-list">
+                    {% for item in recent_activity %}
+                    <li class="recent-item">
+                        <span class="recent-label">{{ item.icon }} {{ item.description }}</span>
+                        <span class="recent-time">{{ item.time_ago }}</span>
+                    </li>
+                    {% endfor %}
+                </ul>
+                {% else %}
+                <p style="color: #555; text-align: center; padding: 30px 0;">No activity yet. Start a campaign to see data here.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Daily emails line chart
+        const dailyCtx = document.getElementById('dailyChart').getContext('2d');
+        new Chart(dailyCtx, {
+            type: 'line',
+            data: {
+                labels: {{ daily_labels | tojson }},
+                datasets: [{
+                    label: 'Emails Sent',
+                    data: {{ daily_data | tojson }},
+                    borderColor: '#4a6aee',
+                    backgroundColor: 'rgba(74, 106, 238, 0.1)',
+                    fill: true,
+                    tension: 0.4,
+                    pointBackgroundColor: '#4a6aee',
+                    pointBorderColor: '#4a6aee',
+                    pointRadius: 3,
+                    pointHoverRadius: 6,
+                    borderWidth: 2
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false },
+                    tooltip: {
+                        backgroundColor: '#1a1a2e',
+                        titleColor: '#e0e0e0',
+                        bodyColor: '#aaa',
+                        borderColor: '#2a2a3e',
+                        borderWidth: 1,
+                        padding: 12,
+                        cornerRadius: 8
+                    }
+                },
+                scales: {
+                    x: {
+                        grid: { color: '#1a1a1a', drawBorder: false },
+                        ticks: { color: '#555', font: { size: 11 }, maxTicksLimit: 10 }
+                    },
+                    y: {
+                        grid: { color: '#1a1a1a', drawBorder: false },
+                        ticks: { color: '#555', font: { size: 11 }, stepSize: 1 },
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+
+        // Campaign status pie chart
+        const statusCtx = document.getElementById('statusChart').getContext('2d');
+        new Chart(statusCtx, {
+            type: 'doughnut',
+            data: {
+                labels: {{ status_labels | tojson }},
+                datasets: [{
+                    data: {{ status_data | tojson }},
+                    backgroundColor: ['#00ff88', '#ff6666', '#ffaa00', '#4a6aee', '#888'],
+                    borderColor: '#111118',
+                    borderWidth: 3,
+                    hoverOffset: 8
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: {
+                            color: '#888',
+                            padding: 15,
+                            font: { size: 12 },
+                            usePointStyle: true,
+                            pointStyleWidth: 10
+                        }
+                    },
+                    tooltip: {
+                        backgroundColor: '#1a1a2e',
+                        titleColor: '#e0e0e0',
+                        bodyColor: '#aaa',
+                        borderColor: '#2a2a3e',
+                        borderWidth: 1,
+                        padding: 12,
+                        cornerRadius: 8
+                    }
+                },
+                cutout: '60%'
+            }
+        });
+    </script>
+</body>
+</html>

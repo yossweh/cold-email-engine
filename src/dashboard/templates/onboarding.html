@@ -1,0 +1,733 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Setup Your Account — 0xChapo</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <style>
+        /* Onboarding Wizard Styles */
+        .wizard-wrapper {
+            max-width: 640px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        .wizard-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .wizard-header .nav-brand {
+            display: inline-flex;
+            margin-bottom: 30px;
+        }
+
+        .wizard-header h1 {
+            font-size: 1.8em;
+            font-weight: 700;
+            background: linear-gradient(135deg, #fff, #8888aa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 8px;
+        }
+
+        .wizard-header p {
+            color: #666;
+            font-size: 14px;
+        }
+
+        /* Progress Bar */
+        .wizard-progress {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0;
+            margin-bottom: 40px;
+            padding: 0 20px;
+        }
+
+        .wizard-step-indicator {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            z-index: 1;
+        }
+
+        .wizard-step-circle {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #111118;
+            border: 2px solid #2a2a3e;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            font-weight: 700;
+            color: #555;
+            transition: all 0.4s ease;
+        }
+
+        .wizard-step-circle.active {
+            border-color: #4a6aee;
+            color: #4a6aee;
+            box-shadow: 0 0 20px rgba(74, 106, 238, 0.2);
+        }
+
+        .wizard-step-circle.completed {
+            background: #4a6aee;
+            border-color: #4a6aee;
+            color: #fff;
+        }
+
+        .wizard-step-label {
+            margin-top: 8px;
+            font-size: 11px;
+            color: #444;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            white-space: nowrap;
+            transition: color 0.3s;
+        }
+
+        .wizard-step-label.active {
+            color: #888;
+        }
+
+        .wizard-step-label.completed {
+            color: #4a6aee;
+        }
+
+        .wizard-line {
+            flex: 1;
+            height: 2px;
+            background: #2a2a3e;
+            margin: 0 8px;
+            margin-bottom: 24px;
+            transition: background 0.4s ease;
+            min-width: 30px;
+        }
+
+        .wizard-line.completed {
+            background: #4a6aee;
+        }
+
+        /* Step Cards */
+        .wizard-step {
+            display: none;
+            animation: fadeSlideIn 0.4s ease;
+        }
+
+        .wizard-step.active {
+            display: block;
+        }
+
+        @keyframes fadeSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(12px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .step-card {
+            background: #111118;
+            border: 1px solid #1a1a1e;
+            border-radius: 16px;
+            padding: 35px;
+        }
+
+        .step-card h2 {
+            font-size: 1.3em;
+            color: #e0e0e0;
+            margin-bottom: 6px;
+            font-weight: 700;
+        }
+
+        .step-card .step-desc {
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 28px;
+            line-height: 1.5;
+        }
+
+        .step-icon {
+            font-size: 36px;
+            margin-bottom: 16px;
+            display: block;
+        }
+
+        /* Option Cards (SMTP choice, CSV choice) */
+        .option-cards {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .option-card {
+            background: #0a0a0a;
+            border: 2px solid #1a1a1e;
+            border-radius: 12px;
+            padding: 20px;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-align: center;
+        }
+
+        .option-card:hover {
+            border-color: #2a2a4e;
+            background: #0f0f1e;
+        }
+
+        .option-card.selected {
+            border-color: #4a6aee;
+            background: #0f0f2e;
+            box-shadow: 0 0 20px rgba(74, 106, 238, 0.1);
+        }
+
+        .option-card-icon {
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+
+        .option-card-title {
+            color: #e0e0e0;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .option-card-subtitle {
+            color: #555;
+            font-size: 12px;
+        }
+
+        .option-card .badge-recommended {
+            display: inline-block;
+            background: linear-gradient(135deg, #4a6aee20, #6a8aee20);
+            color: #6a8aee;
+            border: 1px solid #4a6aee40;
+            border-radius: 8px;
+            padding: 2px 8px;
+            font-size: 10px;
+            font-weight: 600;
+            margin-top: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* CSV Upload */
+        .csv-upload-area {
+            border: 2px dashed #2a2a3e;
+            border-radius: 12px;
+            padding: 40px 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            background: #0a0a0a;
+            margin-bottom: 16px;
+        }
+
+        .csv-upload-area:hover,
+        .csv-upload-area.dragover {
+            border-color: #4a6aee;
+            background: #0f0f2e;
+        }
+
+        .csv-upload-area .upload-icon {
+            font-size: 36px;
+            margin-bottom: 12px;
+            opacity: 0.6;
+        }
+
+        .csv-upload-area .upload-text {
+            color: #888;
+            font-size: 14px;
+            margin-bottom: 4px;
+        }
+
+        .csv-upload-area .upload-hint {
+            color: #444;
+            font-size: 12px;
+        }
+
+        .csv-upload-area input[type="file"] {
+            display: none;
+        }
+
+        .csv-file-info {
+            display: none;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 16px;
+            background: #0a0a0a;
+            border: 1px solid #1a1a1e;
+            border-radius: 8px;
+            margin-bottom: 16px;
+        }
+
+        .csv-file-info.visible {
+            display: flex;
+        }
+
+        .csv-file-info .file-icon {
+            font-size: 20px;
+        }
+
+        .csv-file-info .file-name {
+            color: #e0e0e0;
+            font-size: 13px;
+            flex: 1;
+        }
+
+        .csv-file-info .file-remove {
+            color: #666;
+            cursor: pointer;
+            font-size: 18px;
+            background: none;
+            border: none;
+            padding: 0 4px;
+        }
+
+        .csv-file-info .file-remove:hover {
+            color: #ff6666;
+        }
+
+        /* Info text */
+        .info-text {
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+            padding: 12px 14px;
+            background: #0a0a1a;
+            border: 1px solid #1a1a3e;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 13px;
+            color: #6688cc;
+            line-height: 1.5;
+        }
+
+        .info-text .info-icon {
+            flex-shrink: 0;
+            font-size: 14px;
+            margin-top: 1px;
+        }
+
+        /* Action Buttons */
+        .wizard-actions {
+            display: flex;
+            gap: 12px;
+            margin-top: 28px;
+        }
+
+        .wizard-actions .btn {
+            flex: 1;
+        }
+
+        .wizard-actions .btn-skip {
+            background: transparent;
+            border: 1px solid #1a1a1e;
+            color: #666;
+        }
+
+        .wizard-actions .btn-skip:hover {
+            border-color: #2a2a3e;
+            color: #888;
+        }
+
+        /* Custom checkbox / radio look */
+        .form-check {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 12px;
+            cursor: pointer;
+        }
+
+        .form-check input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            accent-color: #4a6aee;
+        }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            .wizard-wrapper {
+                padding: 20px 16px;
+            }
+
+            .step-card {
+                padding: 24px 20px;
+            }
+
+            .option-cards {
+                grid-template-columns: 1fr;
+            }
+
+            .wizard-step-label {
+                display: none;
+            }
+
+            .wizard-actions {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="wizard-wrapper">
+        <!-- Header -->
+        <div class="wizard-header">
+            <a href="/" class="nav-brand">
+                <div class="nav-icon">◆</div>
+                <span class="nav-title">0XCHAPO</span>
+            </a>
+            <h1>Welcome to 0xChapo</h1>
+            <p>Let's get your cold email engine set up in just a few steps</p>
+        </div>
+
+        <!-- Progress Steps -->
+        <div class="wizard-progress">
+            <div class="wizard-step-indicator">
+                <div class="wizard-step-circle active" id="circle-1">1</div>
+                <div class="wizard-step-label active" id="label-1">Profile</div>
+            </div>
+            <div class="wizard-line" id="line-1"></div>
+            <div class="wizard-step-indicator">
+                <div class="wizard-step-circle" id="circle-2">2</div>
+                <div class="wizard-step-label" id="label-2">Email</div>
+            </div>
+            <div class="wizard-line" id="line-2"></div>
+            <div class="wizard-step-indicator">
+                <div class="wizard-step-circle" id="circle-3">3</div>
+                <div class="wizard-step-label" id="label-3">Leads</div>
+            </div>
+            <div class="wizard-line" id="line-3"></div>
+            <div class="wizard-step-indicator">
+                <div class="wizard-step-circle" id="circle-4">4</div>
+                <div class="wizard-step-label" id="label-4">Campaign</div>
+            </div>
+        </div>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+        {% for category, message in messages %}
+        <div class="flash flash-{{ category }}">{{ message }}</div>
+        {% endfor %}
+        {% endif %}
+        {% endwith %}
+
+        <form id="onboardingForm" method="POST" action="/onboarding" enctype="multipart/form-data">
+            <input type="hidden" name="step_completed" id="stepCompleted" value="4">
+
+            <!-- Step 1: Welcome & Profile -->
+            <div class="wizard-step active" id="step-1">
+                <div class="step-card">
+                    <span class="step-icon">👋</span>
+                    <h2>Tell us about yourself</h2>
+                    <p class="step-desc">Help us personalize your experience</p>
+
+                    <div class="form-group" style="margin-bottom: 18px;">
+                        <label for="display_name">Display Name</label>
+                        <input type="text" id="display_name" name="display_name" placeholder="e.g. John Doe" value="{{ user.name or '' }}">
+                    </div>
+
+                    <div class="form-group" style="margin-bottom: 18px;">
+                        <label for="company_name">Company Name</label>
+                        <input type="text" id="company_name" name="company_name" placeholder="e.g. Acme Inc" value="{{ user.company or '' }}">
+                    </div>
+
+                    <div class="form-group" style="margin-bottom: 0;">
+                        <label for="user_type">What best describes you?</label>
+                        <select id="user_type" name="user_type">
+                            <option value="" disabled selected>Select an option...</option>
+                            <option value="freelancer">Freelancer</option>
+                            <option value="agency">Agency</option>
+                            <option value="saas">SaaS Company</option>
+                            <option value="startup">Startup</option>
+                            <option value="enterprise">Enterprise</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+
+                    <div class="wizard-actions">
+                        <button type="button" class="btn btn-primary" onclick="goToStep(2)">Continue →</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 2: Email Setup -->
+            <div class="wizard-step" id="step-2">
+                <div class="step-card">
+                    <span class="step-icon">📧</span>
+                    <h2>Email Configuration</h2>
+                    <p class="step-desc">Configure your SMTP settings to send emails</p>
+
+                    <div class="form-row" style="margin-bottom: 14px;">
+                        <div class="form-group">
+                            <label for="from_name">Your Name</label>
+                            <input type="text" id="from_name" name="from_name" placeholder="John Doe" value="{{ user.name|default('') }}">
+                        </div>
+                        <div class="form-group">
+                            <label for="from_email">Your Email</label>
+                            <input type="email" id="from_email" name="from_email" placeholder="john@company.com" value="{{ user.email|default('') }}">
+                        </div>
+                    </div>
+
+                    <div style="background: #111; border: 1px solid #2a2a2a; border-radius: 12px; padding: 20px; margin: 16px 0;">
+                        <div style="color: #e0e0e0; font-size: 14px; font-weight: 600; margin-bottom: 14px;">SMTP Server</div>
+                        <div class="form-group" style="margin-bottom: 14px;">
+                            <label for="smtp_host">SMTP Host</label>
+                            <input type="text" id="smtp_host" name="smtp_host" placeholder="e.g. smtp.gmail.com">
+                        </div>
+                        <div class="form-row" style="margin-bottom: 14px;">
+                            <div class="form-group">
+                                <label for="smtp_port">Port</label>
+                                <input type="number" id="smtp_port" name="smtp_port" value="587" placeholder="587">
+                            </div>
+                            <div class="form-group">
+                                <label for="smtp_user">Username</label>
+                                <input type="text" id="smtp_user" name="smtp_user" placeholder="your@email.com">
+                            </div>
+                        </div>
+                        <div class="form-group" style="margin-bottom: 0;">
+                            <label for="smtp_password">Password</label>
+                            <input type="password" id="smtp_password" name="smtp_password" placeholder="Your SMTP password or app password">
+                        </div>
+                    </div>
+
+                    <div class="info-text" style="margin-top: 16px;">
+                        <span class="info-icon">💡</span>
+                        <span>Use Gmail App Password, SendGrid API key, or any SMTP credentials. You can change this later in Settings.</span>
+                    </div>
+
+                    <div class="wizard-actions">
+                        <button type="button" class="btn btn-skip" onclick="goToStep(1)">← Back</button>
+                        <button type="button" class="btn btn-primary" onclick="goToStep(3)">Continue →</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 3: Import Leads -->
+            <div class="wizard-step" id="step-3">
+                <div class="step-card">
+                    <span class="step-icon">📋</span>
+                    <h2>Import Your Leads</h2>
+                    <p class="step-desc">Upload a CSV file with your leads or skip for now</p>
+
+                    <div class="option-cards">
+                        <div class="option-card" id="opt-leads-upload" onclick="selectLeadsOption('upload')">
+                            <div class="option-card-icon">📤</div>
+                            <div class="option-card-title">Upload CSV</div>
+                            <div class="option-card-subtitle">Import from a CSV file</div>
+                        </div>
+                        <div class="option-card selected" id="opt-leads-skip" onclick="selectLeadsOption('skip')">
+                            <div class="option-card-icon">⏭️</div>
+                            <div class="option-card-title">Skip for now</div>
+                            <div class="option-card-subtitle">You can add leads later</div>
+                        </div>
+                    </div>
+
+                    <input type="hidden" name="leads_option" id="leadsOption" value="skip">
+
+                    <div class="csv-upload-section" id="csvUploadSection" style="display: none;">
+                        <div class="csv-upload-area" id="csvDropArea" onclick="document.getElementById('csvFileInput').click()">
+                            <div class="upload-icon">📄</div>
+                            <div class="upload-text">Drop your CSV file here or <strong style="color:#4a6aee;">click to browse</strong></div>
+                            <div class="upload-hint">Supports .csv files with email, name, company columns</div>
+                            <input type="file" id="csvFileInput" name="csv_file" accept=".csv">
+                        </div>
+
+                        <div class="csv-file-info" id="csvFileInfo">
+                            <span class="file-icon">📄</span>
+                            <span class="file-name" id="csvFileName"></span>
+                            <button type="button" class="file-remove" onclick="removeCsvFile()" title="Remove file">&times;</button>
+                        </div>
+                    </div>
+
+                    <div class="info-text">
+                        <span class="info-icon">🔍</span>
+                        <span>You can also scrape leads from the <strong>Scrape</strong> page in your dashboard</span>
+                    </div>
+
+                    <div class="wizard-actions">
+                        <button type="button" class="btn btn-skip" onclick="goToStep(2)">← Back</button>
+                        <button type="button" class="btn btn-primary" onclick="goToStep(4)" id="step3Cta">Continue →</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 4: Create First Campaign -->
+            <div class="wizard-step" id="step-4">
+                <div class="step-card">
+                    <span class="step-icon">🚀</span>
+                    <h2>Create Your First Campaign</h2>
+                    <p class="step-desc">Set up a campaign and let AI generate your emails</p>
+
+                    <div class="form-group" style="margin-bottom: 18px;">
+                        <label for="campaign_name">Campaign Name</label>
+                        <input type="text" id="campaign_name" name="campaign_name" placeholder="e.g. Q4 Outreach, Product Launch">
+                    </div>
+
+                    <div class="form-group" style="margin-bottom: 0;">
+                        <label for="product_description">Product / Service Description</label>
+                        <textarea id="product_description" name="product_description" rows="4" placeholder="Describe what you're selling so AI can craft personalized emails...&#10;&#10;e.g. We help SaaS companies automate their cold outreach with AI-generated personalized emails that get 3x higher reply rates."></textarea>
+                    </div>
+
+                    <div class="info-text" style="margin-top: 20px;">
+                        <span class="info-icon">✨</span>
+                        <span>Your first campaign is ready! We'll use AI to generate personalized emails for each lead.</span>
+                    </div>
+
+                    <div class="wizard-actions">
+                        <button type="button" class="btn btn-skip" onclick="goToStep(3)">← Back</button>
+                        <button type="submit" class="btn btn-primary" onclick="document.getElementById('stepCompleted').value='4'" style="flex:2;">
+                            🚀 Launch Campaign
+                        </button>
+                        <button type="submit" class="btn btn-secondary" onclick="document.getElementById('stepCompleted').value='skip_campaign'" style="flex:1;">
+                            Go to Dashboard
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        let currentStep = 1;
+        const totalSteps = 4;
+
+        function goToStep(step) {
+            // Validate current step before advancing
+            if (step > currentStep) {
+                if (!validateStep(currentStep)) return;
+            }
+
+            // Hide current step
+            document.getElementById(`step-${currentStep}`).classList.remove('active');
+
+            // Show target step
+            currentStep = step;
+            document.getElementById(`step-${currentStep}`).classList.add('active');
+
+            // Update progress indicators
+            updateProgress();
+
+            // Scroll to top
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function validateStep(step) {
+            if (step === 1) {
+                // Profile step - basic validation
+                const name = document.getElementById('display_name').value.trim();
+                if (!name) {
+                    document.getElementById('display_name').style.borderColor = '#ff4444';
+                    document.getElementById('display_name').focus();
+                    setTimeout(() => { document.getElementById('display_name').style.borderColor = ''; }, 2000);
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        function updateProgress() {
+            for (let i = 1; i <= totalSteps; i++) {
+                const circle = document.getElementById(`circle-${i}`);
+                const label = document.getElementById(`label-${i}`);
+
+                circle.classList.remove('active', 'completed');
+                label.classList.remove('active', 'completed');
+
+                if (i < currentStep) {
+                    circle.classList.add('completed');
+                    circle.innerHTML = '✓';
+                    label.classList.add('completed');
+                } else if (i === currentStep) {
+                    circle.classList.add('active');
+                    circle.innerHTML = i;
+                    label.classList.add('active');
+                } else {
+                    circle.innerHTML = i;
+                }
+            }
+
+            // Update lines
+            for (let i = 1; i < totalSteps; i++) {
+                const line = document.getElementById(`line-${i}`);
+                if (i < currentStep) {
+                    line.classList.add('completed');
+                } else {
+                    line.classList.remove('completed');
+                }
+            }
+        }
+
+        // Leads Option Selection
+        function selectLeadsOption(option) {
+            document.getElementById('leadsOption').value = option;
+            document.getElementById('opt-leads-upload').classList.toggle('selected', option === 'upload');
+            document.getElementById('opt-leads-skip').classList.toggle('selected', option === 'skip');
+            document.getElementById('csvUploadSection').style.display = option === 'upload' ? 'block' : 'none';
+            document.getElementById('step3Cta').textContent = option === 'upload' ? 'Upload & Continue →' : 'Continue →';
+        }
+
+        // CSV Drag & Drop
+        const dropArea = document.getElementById('csvDropArea');
+        const fileInput = document.getElementById('csvFileInput');
+
+        if (dropArea) {
+            ['dragenter', 'dragover'].forEach(eventName => {
+                dropArea.addEventListener(eventName, (e) => {
+                    e.preventDefault();
+                    dropArea.classList.add('dragover');
+                });
+            });
+
+            ['dragleave', 'drop'].forEach(eventName => {
+                dropArea.addEventListener(eventName, (e) => {
+                    e.preventDefault();
+                    dropArea.classList.remove('dragover');
+                });
+            });
+
+            dropArea.addEventListener('drop', (e) => {
+                const files = e.dataTransfer.files;
+                if (files.length > 0) {
+                    fileInput.files = files;
+                    showCsvFileInfo(files[0]);
+                }
+            });
+        }
+
+        fileInput.addEventListener('change', (e) => {
+            if (e.target.files.length > 0) {
+                showCsvFileInfo(e.target.files[0]);
+            }
+        });
+
+        function showCsvFileInfo(file) {
+            document.getElementById('csvFileName').textContent = file.name;
+            document.getElementById('csvFileInfo').classList.add('visible');
+            document.getElementById('csvDropArea').style.display = 'none';
+        }
+
+        function removeCsvFile() {
+            fileInput.value = '';
+            document.getElementById('csvFileInfo').classList.remove('visible');
+            document.getElementById('csvDropArea').style.display = 'block';
+        }
+
+        // Initialize
+        updateProgress();
+    </script>
+</body>
+</html>

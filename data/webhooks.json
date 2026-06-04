@@ -1,0 +1,47 @@
+[
+  {
+    "provider": "lemonsqueezy",
+    "event": "license_key_created",
+    "timestamp": "2026-06-04T13:49:34.066961",
+    "payload_keys": [
+      "meta",
+      "data"
+    ]
+  },
+  {
+    "provider": "lemonsqueezy",
+    "event": "order_created",
+    "timestamp": "2026-06-04T13:49:34.177349",
+    "payload_keys": [
+      "meta",
+      "data"
+    ]
+  },
+  {
+    "provider": "lemonsqueezy",
+    "event": "subscription_created",
+    "timestamp": "2026-06-04T13:49:34.896258",
+    "payload_keys": [
+      "meta",
+      "data"
+    ]
+  },
+  {
+    "provider": "lemonsqueezy",
+    "event": "subscription_updated",
+    "timestamp": "2026-06-04T13:50:04.541960",
+    "payload_keys": [
+      "meta",
+      "data"
+    ]
+  },
+  {
+    "provider": "lemonsqueezy",
+    "event": "subscription_payment_success",
+    "timestamp": "2026-06-04T13:51:01.830567",
+    "payload_keys": [
+      "meta",
+      "data"
+    ]
+  }
+]

@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Template Library — 0xChapo</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <style>
+        .template-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(360px, 1fr)); gap: 20px; }
+        .template-card { background: #111118; border: 1px solid #1a1a1e; border-radius: 12px; padding: 24px; transition: all 0.2s; cursor: default; display: flex; flex-direction: column; }
+        .template-card:hover { border-color: #3a3a5e; transform: translateY(-2px); }
+        .template-card-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px; }
+        .template-name { color: #e0e0e0; font-size: 16px; font-weight: 600; }
+        .template-subject { color: #8a8aba; font-size: 13px; margin-bottom: 10px; font-style: italic; }
+        .template-preview { color: #555; font-size: 13px; line-height: 1.6; margin-bottom: 16px; flex-grow: 1; max-height: 100px; overflow: hidden; position: relative; }
+        .template-preview::after { content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 30px; background: linear-gradient(transparent, #111118); }
+        .template-actions { display: flex; gap: 10px; margin-top: auto; }
+        .template-actions .btn { flex: 1; text-align: center; }
+        .category-section { margin-bottom: 40px; }
+        .category-header { display: flex; align-items: center; gap: 12px; margin-bottom: 20px; padding-bottom: 12px; border-bottom: 1px solid #1a1a1a; }
+        .category-icon { font-size: 20px; }
+        .category-name { color: #888; font-size: 14px; text-transform: uppercase; letter-spacing: 1px; font-weight: 600; }
+        .category-count { color: #444; font-size: 13px; }
+        .filter-bar { display: flex; gap: 10px; margin-bottom: 30px; flex-wrap: wrap; }
+        .filter-btn { padding: 8px 18px; background: #111118; border: 1px solid #1a1a1e; border-radius: 20px; color: #666; font-size: 13px; cursor: pointer; transition: all 0.2s; }
+        .filter-btn:hover { border-color: #2a2a3e; color: #aaa; }
+        .filter-btn.active { background: #2a2a4e20; border-color: #4a6aee; color: #8a8aba; }
+        .modal-overlay { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.7); z-index: 100; align-items: center; justify-content: center; }
+        .modal-overlay.show { display: flex; }
+        .modal { background: #111118; border: 1px solid #2a2a3e; border-radius: 16px; padding: 30px; max-width: 650px; width: 90%; max-height: 85vh; overflow-y: auto; }
+        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .modal-title { color: #e0e0e0; font-size: 18px; font-weight: 600; }
+        .modal-close { background: none; border: none; color: #666; font-size: 24px; cursor: pointer; padding: 5px; }
+        .modal-close:hover { color: #e0e0e0; }
+        .modal-subject { color: #8a8aba; font-size: 14px; margin-bottom: 16px; padding: 12px 16px; background: #0f0f1e; border-radius: 8px; border-left: 3px solid #4a6aee; }
+        .modal-body { background: #0f0f0f; border: 1px solid #1a1a1a; border-radius: 10px; padding: 20px; color: #aaa; font-size: 14px; line-height: 1.8; white-space: pre-wrap; font-family: inherit; margin-bottom: 20px; }
+        .modal-actions { display: flex; gap: 10px; }
+        .modal-actions .btn { flex: 1; }
+        .copied-toast { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); background: #00ff8820; border: 1px solid #00ff8840; color: #00ff88; padding: 12px 24px; border-radius: 10px; font-size: 14px; font-weight: 600; z-index: 200; display: none; animation: fadeInUp 0.3s ease; }
+        .copied-toast.show { display: block; }
+        @keyframes fadeInUp { from { opacity: 0; transform: translateX(-50%) translateY(10px); } to { opacity: 1; transform: translateX(-50%) translateY(0); } }
+        .placeholder-highlight { color: #ffaa00; font-family: monospace; font-size: 13px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <nav class="nav">
+            <a href="/dashboard" class="nav-brand">
+                <div class="nav-icon">◆</div>
+                <span class="nav-title">0XCHAPO</span>
+            </a>
+            <div class="nav-links">
+                <a href="/dashboard">Dashboard</a>
+                <a href="/campaign/new">Campaigns</a>
+                <a href="/scrape">Scrape</a>
+                <a href="/leads">Leads</a>
+                <a href="/verify">Verify</a>
+                <a href="/sequences">Sequences</a>
+                <a href="/templates" class="active">Templates</a>
+                <a href="/analytics">Analytics</a>
+                <a href="/activity">Activity</a>
+                <a href="/pricing">Pricing</a>
+                <a href="/profile">Profile</a>
+            </div>
+            <div class="nav-user">
+                <span class="nav-plan plan-{{ user.plan|default('free') }}">{{ user.plan|default('free')|upper }}</span>
+                <a href="/logout" style="color: #666; font-size: 13px;">Logout</a>
+            </div>
+        </nav>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+        {% for category, message in messages %}
+        <div class="flash flash-{{ category }}">{{ message }}</div>
+        {% endfor %}
+        {% endif %}
+        {% endwith %}
+
+        <div class="section">
+            <div class="section-header">
+                <span class="section-title">📚 Email Template Library</span>
+            </div>
+        </div>
+
+        <div class="header" style="margin-bottom: 30px;">
+            <p>Pre-built, proven email templates. Click any template to preview it, then copy to clipboard or open in the campaign creator.</p>
+        </div>
+
+        <!-- Category Filters -->
+        <div class="filter-bar">
+            <div class="filter-btn active" onclick="filterCategory('all')">All Templates</div>
+            {% for cat in categories %}
+            <div class="filter-btn" onclick="filterCategory('{{ cat }}')">{{ cat }}</div>
+            {% endfor %}
+        </div>
+
+        <!-- Templates by Category -->
+        {% for cat, cat_templates in templates_by_category.items() %}
+        <div class="category-section" data-category="{{ cat }}">
+            <div class="category-header">
+                {% if cat == 'Cold Outreach' %}<span class="category-icon">🎯</span>
+                {% elif cat == 'Follow-up' %}<span class="category-icon">🔄</span>
+                {% elif cat == 'Re-engagement' %}<span class="category-icon">🔥</span>
+                {% elif cat == 'Partnership' %}<span class="category-icon">🤝</span>
+                {% elif cat == 'Job Inquiry' %}<span class="category-icon">💼</span>
+                {% else %}<span class="category-icon">📧</span>
+                {% endif %}
+                <span class="category-name">{{ cat }}</span>
+                <span class="category-count">({{ cat_templates|length }} templates)</span>
+            </div>
+            <div class="template-grid">
+                {% for tpl in cat_templates %}
+                <div class="template-card" data-id="{{ tpl.id }}">
+                    <div class="template-card-header">
+                        <span class="template-name">{{ tpl.name }}</span>
+                    </div>
+                    <div class="template-subject">Subject: {{ tpl.subject }}</div>
+                    <div class="template-preview">{{ tpl.body[:200]|trim }}...</div>
+                    <div class="template-actions">
+                        <button class="btn btn-sm btn-secondary" onclick="previewTemplate('{{ tpl.id }}')">👁 Preview</button>
+                        <button class="btn btn-sm btn-primary" onclick="useTemplate('{{ tpl.id }}')">📋 Use Template</button>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endfor %}
+
+        <div style="margin-top: 30px;">
+            <a href="/dashboard" class="btn btn-secondary">← Dashboard</a>
+        </div>
+    </div>
+
+    <!-- Preview Modal -->
+    <div class="modal-overlay" id="modal-overlay" onclick="closeModal(event)">
+        <div class="modal" onclick="event.stopPropagation()">
+            <div class="modal-header">
+                <span class="modal-title" id="modal-title"></span>
+                <button class="modal-close" onclick="closeModal()">&times;</button>
+            </div>
+            <div id="modal-category-badge" style="margin-bottom: 16px;"></div>
+            <div class="modal-subject" id="modal-subject"></div>
+            <div class="modal-body" id="modal-body"></div>
+            <div class="modal-actions">
+                <button class="btn btn-secondary" onclick="closeModal()">Close</button>
+                <button class="btn" onclick="copyTemplate()">📋 Copy to Clipboard</button>
+                <button class="btn btn-primary" onclick="openInCampaign()">🚀 Use in Campaign</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Copied Toast -->
+    <div class="copied-toast" id="copied-toast">✓ Copied to clipboard!</div>
+
+    <script>
+        const templates = {{ templates_json|safe }};
+        let currentTemplate = null;
+
+        function filterCategory(cat) {
+            document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+            event.target.classList.add('active');
+
+            document.querySelectorAll('.category-section').forEach(s => {
+                if (cat === 'all' || s.dataset.category === cat) {
+                    s.style.display = 'block';
+                } else {
+                    s.style.display = 'none';
+                }
+            });
+        }
+
+        function previewTemplate(id) {
+            const tpl = templates.find(t => t.id === id);
+            if (!tpl) return;
+            currentTemplate = tpl;
+
+            document.getElementById('modal-title').textContent = tpl.name;
+            document.getElementById('modal-subject').textContent = 'Subject: ' + tpl.subject;
+            document.getElementById('modal-body').textContent = tpl.body.trim();
+
+            const catColors = {
+                'Cold Outreach': { bg: '#4a6aee20', color: '#6a9aee', border: '#4a6aee40' },
+                'Follow-up': { bg: '#ffaa0020', color: '#ffaa00', border: '#ffaa0040' },
+                'Re-engagement': { bg: '#ff666620', color: '#ff6666', border: '#ff666640' },
+                'Partnership': { bg: '#00ff8820', color: '#00ff88', border: '#00ff8840' },
+                'Job Inquiry': { bg: '#aa66ff20', color: '#aa66ff', border: '#aa66ff40' },
+            };
+            const c = catColors[tpl.category] || { bg: '#1a1a1a', color: '#666', border: '#333' };
+            document.getElementById('modal-category-badge').innerHTML =
+                '<span style="display:inline-block;padding:4px 12px;border-radius:10px;font-size:12px;font-weight:600;background:' + c.bg + ';color:' + c.color + ';border:1px solid ' + c.border + ';">' + tpl.category + '</span>';
+
+            document.getElementById('modal-overlay').classList.add('show');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeModal(e) {
+            if (e && e.target !== document.getElementById('modal-overlay')) return;
+            document.getElementById('modal-overlay').classList.remove('show');
+            document.body.style.overflow = '';
+            currentTemplate = null;
+        }
+
+        function copyTemplate() {
+            if (!currentTemplate) return;
+            const text = 'Subject: ' + currentTemplate.subject + '\n\n' + currentTemplate.body.trim();
+            navigator.clipboard.writeText(text).then(() => {
+                showToast();
+            }).catch(() => {
+                // Fallback for older browsers
+                const ta = document.createElement('textarea');
+                ta.value = text;
+                document.body.appendChild(ta);
+                ta.select();
+                document.execCommand('copy');
+                document.body.removeChild(ta);
+                showToast();
+            });
+        }
+
+        function openInCampaign() {
+            if (!currentTemplate) return;
+            // Copy to clipboard first, then navigate to campaign
+            const text = 'Subject: ' + currentTemplate.subject + '\n\n' + currentTemplate.body.trim();
+            navigator.clipboard.writeText(text).then(() => {
+                showToast();
+                setTimeout(() => { window.location.href = '/campaign/new'; }, 800);
+            }).catch(() => {
+                window.location.href = '/campaign/new';
+            });
+        }
+
+        function useTemplate(id) {
+            previewTemplate(id);
+        }
+
+        function showToast() {
+            const toast = document.getElementById('copied-toast');
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 2000);
+        }
+
+        // Close modal on Escape
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') closeModal();
+        });
+    </script>
+</body>
+</html>

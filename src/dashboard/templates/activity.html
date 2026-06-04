@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Activity Log — 0xChapo</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <style>
+        .filter-bar { display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; }
+        .filter-btn { padding: 8px 16px; background: #111118; border: 1px solid #1a1a1e; border-radius: 8px; color: #888; font-size: 13px; cursor: pointer; transition: all 0.2s; }
+        .filter-btn:hover { border-color: #3a3a5e; color: #ccc; }
+        .filter-btn.active { background: linear-gradient(135deg, #2a2a4e, #3a3a6e); border-color: #4a4a6a; color: #fff; }
+        .activity-list { list-style: none; padding: 0; }
+        .activity-item { display: flex; align-items: flex-start; gap: 15px; padding: 16px 0; border-bottom: 1px solid #1a1a1a; }
+        .activity-item:last-child { border-bottom: none; }
+        .activity-icon { width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0; }
+        .activity-icon.campaign { background: #4a6aee20; border: 1px solid #4a6aee40; }
+        .activity-icon.email { background: #00ff8820; border: 1px solid #00ff8840; }
+        .activity-icon.leads { background: #ffaa0020; border: 1px solid #ffaa0040; }
+        .activity-icon.verify { background: #8855ff20; border: 1px solid #8855ff40; }
+        .activity-icon.settings { background: #66666620; border: 1px solid #66666640; }
+        .activity-content { flex: 1; }
+        .activity-desc { color: #e0e0e0; font-size: 14px; margin-bottom: 4px; }
+        .activity-detail { color: #555; font-size: 12px; }
+        .activity-time { color: #555; font-size: 12px; white-space: nowrap; flex-shrink: 0; }
+        .empty-activity { text-align: center; padding: 60px 20px; color: #444; }
+        .empty-activity .empty-icon { font-size: 48px; margin-bottom: 15px; opacity: 0.5; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <nav class="nav">
+            <a href="/dashboard" class="nav-brand">
+                <div class="nav-icon">◆</div>
+                <span class="nav-title">0XCHAPO</span>
+            </a>
+            <div class="nav-links">
+                <a href="/campaign/new">Campaigns</a>
+                <a href="/scrape">Scrape</a>
+                <a href="/leads">Leads</a>
+                <a href="/verify">Verify</a>
+                <a href="/sequences">Sequences</a>
+                <a href="/templates">Templates</a>
+                <a href="/analytics">Analytics</a>
+                <a href="/activity" class="active">Activity</a>
+                <a href="/pricing">Pricing</a>
+                <a href="/profile">Profile</a>
+            </div>
+            <div class="nav-user">
+                <span class="nav-plan plan-{{ user.plan }}">{{ user.plan|upper }}</span>
+                <a href="/logout" style="color: #666; font-size: 13px;">Logout</a>
+            </div>
+        </nav>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+        {% for category, message in messages %}
+        <div class="flash flash-{{ category }}">{{ message }}</div>
+        {% endfor %}
+        {% endif %}
+        {% endwith %}
+
+        <div class="section-header">
+            <span class="section-title">Activity Log</span>
+        </div>
+
+        <!-- Filter Bar -->
+        <div class="filter-bar">
+            <a href="/activity" class="filter-btn {% if not filter_type %}active{% endif %}">All</a>
+            <a href="/activity?type=campaign" class="filter-btn {% if filter_type == 'campaign' %}active{% endif %}">🚀 Campaigns</a>
+            <a href="/activity?type=email" class="filter-btn {% if filter_type == 'email' %}active{% endif %}">📧 Emails</a>
+            <a href="/activity?type=leads" class="filter-btn {% if filter_type == 'leads' %}active{% endif %}">📋 Leads</a>
+            <a href="/activity?type=verify" class="filter-btn {% if filter_type == 'verify' %}active{% endif %}">✅ Verify</a>
+            <a href="/activity?type=settings" class="filter-btn {% if filter_type == 'settings' %}active{% endif %}">⚙️ Settings</a>
+        </div>
+
+        <!-- Activity List -->
+        <div class="card">
+            {% if activities %}
+            <ul class="activity-list">
+                {% for item in activities %}
+                <li class="activity-item" data-type="{{ item.type }}">
+                    <div class="activity-icon {{ item.type }}">{{ item.icon }}</div>
+                    <div class="activity-content">
+                        <div class="activity-desc">{{ item.description }}</div>
+                        <div class="activity-detail">{{ item.detail }}</div>
+                    </div>
+                    <div class="activity-time">{{ item.time_ago }}</div>
+                </li>
+                {% endfor %}
+            </ul>
+            {% else %}
+            <div class="empty-activity">
+                <div class="empty-icon">📋</div>
+                <div class="empty-title" style="color: #666; margin-bottom: 8px;">No activity yet</div>
+                <div class="empty-desc" style="color: #444;">Actions you take will appear here</div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</body>
+</html>

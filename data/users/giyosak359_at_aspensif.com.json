@@ -1,0 +1,32 @@
+{
+  "email": "giyosak359@aspensif.com",
+  "name": "ygyy",
+  "password_hash": "e561d31117c6b223cb60f3419250ef20e33e2e5370153acb8be9b85c92af19eb",
+  "salt": "abc21096503591988cdebf1eb5254ed3",
+  "created": "2026-06-04T17:05:02.855762",
+  "plan": "free",
+  "plan_expires": null,
+  "trial_expires": "2026-06-11T17:05:04.419373",
+  "license_key": null,
+  "usage": {
+    "emails_sent": 0,
+    "emails_limit": 500,
+    "last_reset": "2026-06-04T17:05:04.419424"
+  },
+  "settings": {
+    "smtp_host": "",
+    "smtp_port": 587,
+    "smtp_user": "",
+    "smtp_password": "",
+    "from_name": "ygyy",
+    "from_email": "giyosak359@aspensif.com",
+    "anthropic_api_key": ""
+  },
+  "onboarding_completed": true,
+  "onboarding_completed_at": "2026-06-04T17:05:20.252894",
+  "pending_crypto": {
+    "order_id": "0xchapo_giyosak359@aspensif.com_pro_1780570014",
+    "plan": "pro",
+    "created_at": "2026-06-04T18:46:54.364583"
+  }
+}

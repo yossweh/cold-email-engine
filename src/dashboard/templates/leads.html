@@ -3,37 +3,52 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lead Management — Cold Email Engine</title>
+    <title>Lead Management — 0xChapo</title>
+    <link rel="stylesheet" href="/static/style.css">
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #0a0a0a; color: #e0e0e0; }
-        .container { max-width: 1000px; margin: 0 auto; padding: 20px; }
-        h1 { color: #00ff88; margin-bottom: 30px; }
-        h2 { color: #fff; margin: 20px 0 10px; }
-        .card { background: #1a1a1a; border: 1px solid #333; border-radius: 8px; padding: 20px; margin-bottom: 20px; }
-        .btn { display: inline-block; padding: 10px 20px; background: #00ff88; color: #000; text-decoration: none; border-radius: 5px; font-weight: bold; border: none; cursor: pointer; font-size: 14px; }
-        .btn:hover { background: #00cc6a; }
-        .btn-secondary { background: #333; color: #fff; }
-        .btn-danger { background: #ff4444; color: #fff; }
-        label { display: block; color: #888; margin-bottom: 5px; margin-top: 15px; }
-        input, textarea, select { width: 100%; padding: 10px; background: #0a0a0a; border: 1px solid #333; border-radius: 5px; color: #fff; font-size: 14px; }
-        textarea { min-height: 120px; resize: vertical; }
-        .tabs { display: flex; gap: 10px; margin-bottom: 20px; }
-        .tab { padding: 10px 20px; background: #222; border: 1px solid #333; border-radius: 5px; cursor: pointer; color: #888; }
-        .tab.active { background: #00ff8833; border-color: #00ff88; color: #00ff88; }
+        /* Tabs */
+        .tabs { display: flex; gap: 10px; margin-bottom: 25px; }
+        .tab { padding: 10px 20px; background: #111118; border: 1px solid #1a1a1e; border-radius: 10px; cursor: pointer; color: #666; font-size: 14px; font-weight: 500; transition: all 0.2s; }
+        .tab:hover { border-color: #2a2a3e; color: #aaa; }
+        .tab.active { background: #1a1a3e; border-color: #4a4a6a; color: #e0e0e0; }
         .tab-content { display: none; }
         .tab-content.active { display: block; }
-        table { width: 100%; border-collapse: collapse; }
-        th, td { padding: 10px; text-align: left; border-bottom: 1px solid #333; }
-        th { color: #888; }
-        .flash { padding: 10px; border-radius: 5px; margin-bottom: 15px; }
-        .flash-success { background: #00ff8833; border: 1px solid #00ff88; color: #00ff88; }
-        .flash-error { background: #ff444433; border: 1px solid #ff4444; color: #ff4444; }
+        /* File input styling */
+        .file-input-wrapper { position: relative; }
+        .file-input-wrapper input[type="file"] { padding: 12px 15px; background: #0f0f0f; border: 1px solid #1a1a1a; border-radius: 8px; color: #aaa; font-size: 14px; width: 100%; cursor: pointer; }
+        .file-input-wrapper input[type="file"]::file-selector-button { background: linear-gradient(135deg, #2a2a4e, #3a3a6e); color: #fff; border: 1px solid #4a4a6a; border-radius: 6px; padding: 8px 16px; font-size: 13px; cursor: pointer; margin-right: 12px; transition: all 0.2s; }
+        .file-input-wrapper input[type="file"]::file-selector-button:hover { background: linear-gradient(135deg, #3a3a5e, #4a4a7e); }
+        /* Help text */
+        .supported-cols { color: #555; font-size: 13px; line-height: 1.6; margin-top: 20px; padding: 15px; background: #0f0f0f; border-radius: 8px; border: 1px solid #1a1a1a; }
+        .supported-cols strong { color: #888; }
+        .supported-cols code { background: #1a1a2e; padding: 2px 6px; border-radius: 4px; font-size: 12px; color: #8a8aba; }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>📋 Lead Management</h1>
+        <nav class="nav">
+            <a href="/dashboard" class="nav-brand">
+                <div class="nav-icon">◆</div>
+                <span class="nav-title">0XCHAPO</span>
+            </a>
+            <div class="nav-links">
+                <a href="/dashboard">Dashboard</a>
+                <a href="/campaign/new">Campaigns</a>
+                <a href="/scrape">Scrape</a>
+                <a href="/leads" class="active">Leads</a>
+                <a href="/verify">Verify</a>
+                <a href="/sequences">Sequences</a>
+                <a href="/templates">Templates</a>
+                <a href="/analytics">Analytics</a>
+                <a href="/activity">Activity</a>
+                <a href="/pricing">Pricing</a>
+                <a href="/profile">Profile</a>
+            </div>
+            <div class="nav-user">
+                <span class="nav-plan plan-{{ user.plan }}">{{ user.plan|upper }}</span>
+                <a href="/logout" style="color: #666; font-size: 13px;">Logout</a>
+            </div>
+        </nav>
 
         {% with messages = get_flashed_messages(with_categories=true) %}
         {% if messages %}
@@ -43,88 +58,97 @@
         {% endif %}
         {% endwith %}
 
+        <!-- Tabs -->
         <div class="tabs">
             <div class="tab active" onclick="switchTab('csv')">📁 CSV Import</div>
             <div class="tab" onclick="switchTab('manual')">✏️ Manual Entry</div>
             <div class="tab" onclick="switchTab('lists')">📊 Saved Lists</div>
         </div>
 
+        <!-- CSV Import Tab -->
         <div id="tab-csv" class="tab-content active">
-            <div class="card">
-                <h2>Import from CSV</h2>
-                <form method="POST" enctype="multipart/form-data">
+            <div class="card-flat">
+                <div class="section-title">Import from CSV</div>
+                <form method="POST" enctype="multipart/form-data" style="margin-top: 20px;">
                     <input type="hidden" name="action" value="import_csv">
 
-                    <label for="file">CSV File</label>
-                    <input type="file" name="file" id="file" accept=".csv" style="padding: 10px;">
+                    <div class="form-group">
+                        <label for="file">CSV File</label>
+                        <div class="file-input-wrapper">
+                            <input type="file" name="file" id="file" accept=".csv">
+                        </div>
+                    </div>
 
-                    <label for="list_name">List Name (optional)</label>
-                    <input type="text" name="list_name" id="list_name" placeholder="my-leads">
+                    <div class="form-group">
+                        <label for="list_name">List Name (optional)</label>
+                        <input type="text" name="list_name" id="list_name" placeholder="my-leads">
+                    </div>
 
-                    <button type="submit" class="btn" style="margin-top: 15px;">Import</button>
+                    <button type="submit" class="btn" style="margin-top: 10px;">Import Leads</button>
                 </form>
 
-                <div style="margin-top: 20px; color: #888;">
+                <div class="supported-cols">
                     <p><strong>Supported columns:</strong></p>
-                    <p>email, name, company, website, title, phone, linkedin, notes</p>
-                    <p style="margin-top: 10px;">Column names are case-insensitive. The engine auto-detects email columns.</p>
+                    <p style="margin-top: 5px;">
+                        <code>email</code> <code>name</code> <code>company</code> <code>website</code>
+                        <code>title</code> <code>phone</code> <code>linkedin</code> <code>notes</code>
+                    </p>
+                    <p style="margin-top: 8px;">Column names are case-insensitive. The engine auto-detects email columns.</p>
                 </div>
             </div>
         </div>
 
+        <!-- Manual Entry Tab -->
         <div id="tab-manual" class="tab-content">
-            <div class="card">
-                <h2>Manual Entry</h2>
-                <form method="POST">
+            <div class="card-flat">
+                <div class="section-title">Manual Entry</div>
+                <form method="POST" style="margin-top: 20px;">
                     <input type="hidden" name="action" value="import_manual">
 
-                    <label for="entries">Leads (one per line)</label>
-                    <textarea name="entries" id="entries" placeholder="john@company.com&#10;jane@example.com&#10;https://company.com"></textarea>
+                    <div class="form-group">
+                        <label for="entries">Leads (one per line)</label>
+                        <textarea name="entries" id="entries" placeholder="john@company.com&#10;jane@example.com&#10;https://company.com"></textarea>
+                    </div>
 
-                    <label for="list_name_manual">List Name</label>
-                    <input type="text" name="list_name" id="list_name_manual" placeholder="manual-leads">
+                    <div class="form-group">
+                        <label for="list_name_manual">List Name</label>
+                        <input type="text" name="list_name" id="list_name_manual" placeholder="manual-leads">
+                    </div>
 
-                    <button type="submit" class="btn" style="margin-top: 15px;">Add Leads</button>
+                    <button type="submit" class="btn" style="margin-top: 10px;">Add Leads</button>
                 </form>
             </div>
         </div>
 
+        <!-- Saved Lists Tab -->
         <div id="tab-lists" class="tab-content">
+            {% if lead_lists %}
+            {% for list in lead_lists %}
             <div class="card">
-                <h2>Saved Lead Lists</h2>
-                {% if lead_lists %}
-                <table>
-                    <thead>
-                        <tr>
-                            <th>List Name</th>
-                            <th>Leads</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for list in lead_lists %}
-                        <tr>
-                            <td>{{ list.name }}</td>
-                            <td>{{ list.count }}</td>
-                            <td>
-                                <a href="/leads/{{ list.name }}" class="btn btn-secondary" style="padding: 5px 15px;">View</a>
-                                <form method="POST" style="display: inline;">
-                                    <input type="hidden" name="action" value="deduplicate">
-                                    <input type="hidden" name="list_name" value="{{ list.name }}">
-                                    <button type="submit" class="btn btn-secondary" style="padding: 5px 15px;">Dedup</button>
-                                </form>
-                            </td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-                {% else %}
-                <p style="color: #888;">No saved lists yet.</p>
-                {% endif %}
+                <div class="card-header">
+                    <div>
+                        <span class="card-title">{{ list.name }}</span>
+                        <div class="card-meta" style="margin-top: 4px;">{{ list.count }} leads</div>
+                    </div>
+                    <div style="display: flex; gap: 10px;">
+                        <a href="/leads/{{ list.name }}" class="btn btn-sm">View Details</a>
+                        <form method="POST" style="display: inline;">
+                            <input type="hidden" name="action" value="deduplicate">
+                            <input type="hidden" name="list_name" value="{{ list.name }}">
+                            <button type="submit" class="btn btn-sm btn-secondary">Deduplicate</button>
+                        </form>
+                    </div>
+                </div>
             </div>
+            {% endfor %}
+            {% else %}
+            <div class="empty">
+                <div class="empty-icon">📋</div>
+                <div class="empty-title">No saved lead lists yet</div>
+                <div class="empty-desc">Import a CSV file or add leads manually to get started</div>
+            </div>
+            {% endif %}
         </div>
-
-        <a href="/" class="btn btn-secondary">← Dashboard</a>
     </div>
 
     <script>
