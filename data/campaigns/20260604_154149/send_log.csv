@@ -1,2 +1,0 @@
-to,subject,status,error,timestamp
-achmadyosifa@gmail.com,Quick question about Gmail's growth,failed,"(550, b'The from address does not match a verified Sender Identity. Mail cannot be sent until this error is resolved. Visit https://sendgrid.com/docs/for-developers/sending-email/sender-identity/ to see the Sender Identity requirements')",2026-06-04T15:41:51.171459
