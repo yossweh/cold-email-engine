@@ -6,3 +6,7 @@ data/campaigns/
 *.egg-info/
 dist/
 build/
+src/data/
+check_smtp.py
+test_email.py
+test_gmail.py
