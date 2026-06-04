@@ -104,11 +104,13 @@ sudo systemctl start 0xchapo
 
 ## 💰 Pricing
 
-| Plan | Price | Emails/Day | Features |
-|------|-------|------------|----------|
-| **Free** | $0 | 10 | Basic scraping, AI generation, CSV import |
-| **Pro** | $15/mo | 500 | + Follow-ups, API access, Priority support |
-| **Enterprise** | $49/mo | Unlimited | + White-label, Custom domain, Team management |
+| Plan | Monthly | Yearly | Emails/Day | Features |
+|------|---------|--------|------------|----------|
+| **Free** | $0 (Gratis) | $0 | 10 | Basic scraping, AI generation, CSV import |
+| **Pro** | $15/mo (IDR 249K) | $12/mo (IDR 199K) | 500 | + Follow-ups, API access, Priority support |
+| **Enterprise** | $49/mo (IDR 799K) | $39/mo (IDR 639K) | Unlimited | + White-label, Custom domain, Team management |
+
+> 💡 **Yearly billing saves 20%!**
 
 ### Payment Methods
 - 🪙 **Crypto** — BTC, ETH, USDC, SOL, DOGE, +360 coins (via NOWPayments)
